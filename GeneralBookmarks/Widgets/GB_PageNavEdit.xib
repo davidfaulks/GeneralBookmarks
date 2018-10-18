@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14113" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14113"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="GB_PageNavEdit" customModule="GeneralBookmarks" customModuleProvider="target">
+            <connections>
+                <outlet property="contents" destination="c22-O7-iKe" id="vgG-Bp-xFm"/>
+                <outlet property="linkInfoLabel" destination="GNm-rc-NYC" id="1FM-7G-eWi"/>
+                <outlet property="overallLabel" destination="F7Y-F6-KZO" id="LjD-aD-drj"/>
+                <outlet property="overallTemplate" destination="dJf-QX-gk2" id="RYh-em-mUn"/>
+                <outlet property="pageLinkLabel" destination="dc4-74-zZC" id="2uw-cS-kB8"/>
+                <outlet property="pageLinkTemplate" destination="Iv9-c1-2ME" id="9ND-09-xe1"/>
+                <outlet property="samePageLinkLabel" destination="T3I-bQ-aFE" id="a94-44-Nmd"/>
+                <outlet property="samePageLinkTemplate" destination="k8z-LH-G50" id="TQg-Np-qow"/>
+                <outlet property="samePageTreatmentLabel" destination="wy7-yl-246" id="hXb-S5-UYm"/>
+                <outlet property="samePageTreatmentPicker" destination="geG-fp-OaV" id="MpN-XQ-v0n"/>
+                <outlet property="separatorEdit" destination="m5g-6u-0Di" id="ag4-XA-CDT"/>
+                <outlet property="separatorLabel" destination="Gxc-O2-I8c" id="Nue-SY-nRE"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView id="c22-O7-iKe">
+            <rect key="frame" x="0.0" y="0.0" width="345" height="320"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dc4-74-zZC">
+                    <rect key="frame" x="8" y="218" width="74" height="17"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Page Link :" id="KsL-QV-UN0">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Iv9-c1-2ME">
+                    <rect key="frame" x="90" y="215" width="240" height="22"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="240" id="tHA-8K-kyB"/>
+                    </constraints>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="CjP-UN-1Az">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                    <connections>
+                        <action selector="pageLinkTemplateChanged:" target="-2" id="lXw-Rh-c7i"/>
+                    </connections>
+                </textField>
+                <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="geG-fp-OaV">
+                    <rect key="frame" x="152" y="176" width="183" height="26"/>
+                    <popUpButtonCell key="cell" type="push" title="Use the Template below" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="Qph-LX-U1s" id="hvD-wL-PqH">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="menu"/>
+                        <menu key="menu" id="h3L-SD-aqi">
+                            <items>
+                                <menuItem title="Same as the Page Link" id="y5M-QG-0RQ"/>
+                                <menuItem title="Use the Template below" state="on" id="Qph-LX-U1s"/>
+                                <menuItem title="Do not output" id="JYp-Vr-Efc"/>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                    <connections>
+                        <action selector="samePageTreatmentPickerChanged:" target="-2" id="hhN-DQ-5N2"/>
+                    </connections>
+                </popUpButton>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="T3I-bQ-aFE">
+                    <rect key="frame" x="8" y="145" width="94" height="17"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="90" id="VwR-uF-8Fz"/>
+                    </constraints>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Current Page :" id="184-9H-6FC">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="k8z-LH-G50">
+                    <rect key="frame" x="110" y="142" width="220" height="22"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="ylG-5Y-Z9v">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                    <connections>
+                        <action selector="samePageTemplateChanged:" target="-2" id="a94-f3-m6s"/>
+                    </connections>
+                </textField>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Gxc-O2-I8c">
+                    <rect key="frame" x="23" y="103" width="134" height="17"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Page Link Separator :" id="4a6-1q-Xty">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="m5g-6u-0Di">
+                    <rect key="frame" x="170" y="100" width="120" height="22"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="120" id="lQ3-nl-6C4"/>
+                    </constraints>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="TeX-Xo-D2p">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                    <connections>
+                        <action selector="separatorChanged:" target="-2" id="wvD-ha-na3"/>
+                    </connections>
+                </textField>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="F7Y-F6-KZO">
+                    <rect key="frame" x="13" y="63" width="283" height="17"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="&amp;#0# will be replaced by the list of page links." id="t37-5o-NHW">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dJf-QX-gk2">
+                    <rect key="frame" x="15" y="31" width="315" height="22"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="7lz-sj-AeC">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                    <connections>
+                        <action selector="overallTemplateChanged:" target="-2" id="u2h-2w-QZa"/>
+                    </connections>
+                </textField>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="GNm-rc-NYC">
+                    <rect key="frame" x="8" y="252" width="329" height="58"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="325" id="Wnv-Lz-Xus"/>
+                        <constraint firstAttribute="height" constant="58" id="cEf-lk-ISD"/>
+                    </constraints>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="YKp-i2-27e">
+                        <font key="font" metaFont="system"/>
+                        <string key="title">For the Page link and Current Page,  below, &amp;#0# will be replaced by the page filename, and &amp;#1# will be replaced by the page name.</string>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wy7-yl-246">
+                    <rect key="frame" x="8" y="181" width="143" height="17"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Current Page Options :" id="69G-Pi-Pbd">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+            </subviews>
+            <constraints>
+                <constraint firstItem="geG-fp-OaV" firstAttribute="leading" secondItem="wy7-yl-246" secondAttribute="trailing" constant="5" id="1lC-9u-reZ"/>
+                <constraint firstItem="wy7-yl-246" firstAttribute="centerY" secondItem="geG-fp-OaV" secondAttribute="centerY" id="2At-04-ltl"/>
+                <constraint firstAttribute="trailing" secondItem="Iv9-c1-2ME" secondAttribute="trailing" constant="15" id="3NM-b3-SAn"/>
+                <constraint firstItem="F7Y-F6-KZO" firstAttribute="leading" secondItem="c22-O7-iKe" secondAttribute="leading" constant="15" id="4Xg-cq-e9x"/>
+                <constraint firstItem="Iv9-c1-2ME" firstAttribute="leading" secondItem="dc4-74-zZC" secondAttribute="trailing" constant="10" id="7cv-Md-kBT"/>
+                <constraint firstItem="m5g-6u-0Di" firstAttribute="top" secondItem="k8z-LH-G50" secondAttribute="bottom" constant="20" id="DLS-Bj-4DC"/>
+                <constraint firstItem="geG-fp-OaV" firstAttribute="top" secondItem="Iv9-c1-2ME" secondAttribute="bottom" constant="15" id="Hrd-kJ-PBE"/>
+                <constraint firstItem="dc4-74-zZC" firstAttribute="leading" secondItem="c22-O7-iKe" secondAttribute="leading" constant="10" id="Jcf-7w-Ntc"/>
+                <constraint firstItem="Gxc-O2-I8c" firstAttribute="leading" secondItem="c22-O7-iKe" secondAttribute="leading" constant="25" id="KlC-aL-EUv"/>
+                <constraint firstItem="Gxc-O2-I8c" firstAttribute="centerY" secondItem="m5g-6u-0Di" secondAttribute="centerY" id="Ksn-N5-AZU"/>
+                <constraint firstItem="F7Y-F6-KZO" firstAttribute="top" secondItem="m5g-6u-0Di" secondAttribute="bottom" constant="20" id="ODe-6X-1gA"/>
+                <constraint firstItem="T3I-bQ-aFE" firstAttribute="leading" secondItem="c22-O7-iKe" secondAttribute="leading" constant="10" id="PlG-Cy-Qeg"/>
+                <constraint firstItem="GNm-rc-NYC" firstAttribute="leading" secondItem="c22-O7-iKe" secondAttribute="leading" constant="10" id="Ryt-35-emW"/>
+                <constraint firstItem="k8z-LH-G50" firstAttribute="leading" secondItem="T3I-bQ-aFE" secondAttribute="trailing" constant="10" id="S07-LL-khI"/>
+                <constraint firstItem="wy7-yl-246" firstAttribute="leading" secondItem="c22-O7-iKe" secondAttribute="leading" constant="10" id="Txu-gV-UT7"/>
+                <constraint firstItem="Iv9-c1-2ME" firstAttribute="top" secondItem="GNm-rc-NYC" secondAttribute="bottom" constant="15" id="Xcy-3c-swg"/>
+                <constraint firstItem="dJf-QX-gk2" firstAttribute="leading" secondItem="c22-O7-iKe" secondAttribute="leading" constant="15" id="YTU-DP-sIn"/>
+                <constraint firstItem="k8z-LH-G50" firstAttribute="trailing" secondItem="Iv9-c1-2ME" secondAttribute="trailing" id="aYn-Dw-4Qk"/>
+                <constraint firstItem="GNm-rc-NYC" firstAttribute="top" secondItem="c22-O7-iKe" secondAttribute="top" constant="10" id="cF4-Cg-BwB"/>
+                <constraint firstItem="dc4-74-zZC" firstAttribute="centerY" secondItem="Iv9-c1-2ME" secondAttribute="centerY" id="ePr-Pa-ipX"/>
+                <constraint firstItem="m5g-6u-0Di" firstAttribute="leading" secondItem="Gxc-O2-I8c" secondAttribute="trailing" constant="15" id="lDM-rf-qzS"/>
+                <constraint firstItem="T3I-bQ-aFE" firstAttribute="centerY" secondItem="k8z-LH-G50" secondAttribute="centerY" id="muz-EH-x07"/>
+                <constraint firstItem="k8z-LH-G50" firstAttribute="top" secondItem="geG-fp-OaV" secondAttribute="bottom" constant="15" id="nPr-wa-qhK"/>
+                <constraint firstItem="dJf-QX-gk2" firstAttribute="trailing" secondItem="Iv9-c1-2ME" secondAttribute="trailing" id="phY-nK-4zM"/>
+                <constraint firstItem="dJf-QX-gk2" firstAttribute="top" secondItem="F7Y-F6-KZO" secondAttribute="bottom" constant="10" id="tP4-aG-qtd"/>
+            </constraints>
+            <point key="canvasLocation" x="-508.5" y="114"/>
+        </customView>
+    </objects>
+</document>

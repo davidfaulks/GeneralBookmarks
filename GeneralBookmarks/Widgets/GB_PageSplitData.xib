@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13771" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13771"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="GB_PageSplitData" customModule="GeneralBookmarks" customModuleProvider="target">
+            <connections>
+                <outlet property="columCountDisplay" destination="oDW-Vr-0By" id="9eG-4a-Ds4"/>
+                <outlet property="columnCountLabel" destination="D28-pj-WID" id="i1L-uD-D8h"/>
+                <outlet property="columnCountStepper" destination="oJx-Ad-8tL" id="bp0-zd-zwG"/>
+                <outlet property="contentView" destination="c22-O7-iKe" id="YbD-DI-wzG"/>
+                <outlet property="explainLabel" destination="QK9-wZ-xJ2" id="zxh-UP-NU0"/>
+                <outlet property="groupSizeBufferEdit" destination="ntD-uW-Qy7" id="6aS-VE-xXU"/>
+                <outlet property="groupSizeBufferLabel" destination="Lfy-XB-ttf" id="ZG0-b0-teA"/>
+                <outlet property="majorSiteSizeEdit" destination="LSQ-cR-8DO" id="rr1-g5-lRz"/>
+                <outlet property="majorSiteSizeLabel" destination="2Sp-B2-WZn" id="2pT-uM-0R4"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView id="c22-O7-iKe">
+            <rect key="frame" x="0.0" y="0.0" width="345" height="165"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="QK9-wZ-xJ2">
+                    <rect key="frame" x="13" y="115" width="319" height="40"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="315" id="XmI-nP-oHL"/>
+                        <constraint firstAttribute="height" constant="40" id="Zq0-OS-oBC"/>
+                    </constraints>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="The program attempts to split Groups within a page into Lists/Columns based on their estimated size." id="blk-TT-YC2">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oDW-Vr-0By">
+                    <rect key="frame" x="13" y="85" width="20" height="17"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="16" id="TrX-wZ-zPy"/>
+                    </constraints>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="2" id="ixH-ao-Itb">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oJx-Ad-8tL">
+                    <rect key="frame" x="38" y="80" width="19" height="27"/>
+                    <stepperCell key="cell" continuous="YES" alignment="left" minValue="1" maxValue="6" doubleValue="2" id="cns-MJ-1ve"/>
+                    <connections>
+                        <action selector="columnStepperChanged:" target="-2" id="e6u-Bh-hYa"/>
+                    </connections>
+                </stepper>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="D28-pj-WID">
+                    <rect key="frame" x="62" y="85" width="158" height="17"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Number of Lists/Columns" id="nhC-TO-nmc">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="LSQ-cR-8DO">
+                    <rect key="frame" x="16" y="50" width="38" height="22"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" title="9.0" drawsBackground="YES" id="a0j-da-Ikb">
+                        <numberFormatter key="formatter" formatterBehavior="custom10_4" numberStyle="decimal" alwaysShowsDecimalSeparator="YES" usesGroupingSeparator="NO" minimumIntegerDigits="1" maximumIntegerDigits="2" minimumFractionDigits="1" maximumFractionDigits="1" id="jE7-2z-Dbi">
+                            <real key="minimum" value="0.0"/>
+                        </numberFormatter>
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="2Sp-B2-WZn">
+                    <rect key="frame" x="62" y="53" width="94" height="17"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Major Site Size" id="rb8-Qc-vqE">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Lfy-XB-ttf">
+                    <rect key="frame" x="62" y="16" width="112" height="17"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Group Size Buffer" id="T8h-ke-Gba">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ntD-uW-Qy7">
+                    <rect key="frame" x="16" y="13" width="38" height="22"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="38" id="8DM-en-V87"/>
+                    </constraints>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" title="99.0" drawsBackground="YES" id="g7R-og-pem">
+                        <numberFormatter key="formatter" formatterBehavior="custom10_4" numberStyle="decimal" alwaysShowsDecimalSeparator="YES" usesGroupingSeparator="NO" minimumIntegerDigits="1" maximumIntegerDigits="2" minimumFractionDigits="1" maximumFractionDigits="1" id="Ap0-0p-QG3"/>
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+            </subviews>
+            <constraints>
+                <constraint firstItem="Lfy-XB-ttf" firstAttribute="leading" secondItem="ntD-uW-Qy7" secondAttribute="trailing" constant="10" id="2aj-fk-9Un"/>
+                <constraint firstItem="D28-pj-WID" firstAttribute="leading" secondItem="oJx-Ad-8tL" secondAttribute="trailing" constant="10" id="Lvg-u1-CZY"/>
+                <constraint firstItem="oDW-Vr-0By" firstAttribute="centerY" secondItem="oJx-Ad-8tL" secondAttribute="centerY" id="MfE-gx-VI6"/>
+                <constraint firstItem="ntD-uW-Qy7" firstAttribute="trailing" secondItem="LSQ-cR-8DO" secondAttribute="trailing" id="PE1-2u-nvF"/>
+                <constraint firstItem="LSQ-cR-8DO" firstAttribute="trailing" secondItem="oJx-Ad-8tL" secondAttribute="trailing" id="SRH-ep-jk0"/>
+                <constraint firstItem="LSQ-cR-8DO" firstAttribute="top" secondItem="oJx-Ad-8tL" secondAttribute="bottom" constant="10" id="UFX-M6-dXZ"/>
+                <constraint firstItem="ntD-uW-Qy7" firstAttribute="top" secondItem="LSQ-cR-8DO" secondAttribute="bottom" constant="15" id="VTL-gX-3bM"/>
+                <constraint firstItem="QK9-wZ-xJ2" firstAttribute="leading" secondItem="c22-O7-iKe" secondAttribute="leading" constant="15" id="VfO-Jw-Kbz"/>
+                <constraint firstItem="oJx-Ad-8tL" firstAttribute="leading" secondItem="oDW-Vr-0By" secondAttribute="trailing" constant="10" id="WAK-8i-eNQ"/>
+                <constraint firstItem="D28-pj-WID" firstAttribute="centerY" secondItem="oJx-Ad-8tL" secondAttribute="centerY" id="Xgq-5u-1L1"/>
+                <constraint firstItem="2Sp-B2-WZn" firstAttribute="leading" secondItem="LSQ-cR-8DO" secondAttribute="trailing" constant="10" id="Z8n-B8-FyZ"/>
+                <constraint firstItem="oJx-Ad-8tL" firstAttribute="top" secondItem="QK9-wZ-xJ2" secondAttribute="bottom" constant="10" id="cTS-ra-hGr"/>
+                <constraint firstItem="QK9-wZ-xJ2" firstAttribute="top" secondItem="c22-O7-iKe" secondAttribute="top" constant="10" id="ce9-9N-BFt"/>
+                <constraint firstItem="LSQ-cR-8DO" firstAttribute="width" secondItem="ntD-uW-Qy7" secondAttribute="width" id="ii1-Tg-uV6"/>
+                <constraint firstItem="oDW-Vr-0By" firstAttribute="leading" secondItem="c22-O7-iKe" secondAttribute="leading" constant="15" id="kWh-jK-mGm"/>
+                <constraint firstItem="Lfy-XB-ttf" firstAttribute="centerY" secondItem="ntD-uW-Qy7" secondAttribute="centerY" id="l6E-fv-DDk"/>
+                <constraint firstItem="2Sp-B2-WZn" firstAttribute="centerY" secondItem="LSQ-cR-8DO" secondAttribute="centerY" id="y9D-4R-kwP"/>
+            </constraints>
+            <point key="canvasLocation" x="-33.5" y="125"/>
+        </customView>
+    </objects>
+</document>

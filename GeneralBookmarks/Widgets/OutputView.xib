@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14113" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14113"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="OutputView" customModule="GeneralBookmarks" customModuleProvider="target">
+            <connections>
+                <outlet property="cancelButton" destination="VgD-fm-a6q" id="NIS-kw-RWv"/>
+                <outlet property="loadTemplateButton" destination="hlg-EB-07C" id="8uh-he-FmJ"/>
+                <outlet property="outputDirectoryButton" destination="wD5-r3-biH" id="E4F-rn-LrE"/>
+                <outlet property="outputProgressBar" destination="ykw-qM-z90" id="ch6-ZL-f51"/>
+                <outlet property="outputProgressLabel" destination="yfQ-31-Mmd" id="F5N-PZ-zF5"/>
+                <outlet property="pickTemplateList" destination="ulY-Ke-Knx" id="HBa-nb-Lpk"/>
+                <outlet property="progressDetailLabel" destination="zgh-SQ-X7m" id="u1z-uO-SgC"/>
+                <outlet property="startOutputButton" destination="Jup-fA-nkB" id="8Xs-eN-Lpi"/>
+                <outlet property="templateStatusLabel" destination="ccB-3a-NGC" id="m43-OJ-9pg"/>
+                <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView id="Hz6-mo-xeY">
+            <rect key="frame" x="0.0" y="0.0" width="480" height="228"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <progressIndicator wantsLayer="YES" maxValue="100" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="ykw-qM-z90">
+                    <rect key="frame" x="230" y="115" width="230" height="20"/>
+                </progressIndicator>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="VgD-fm-a6q">
+                    <rect key="frame" x="369" y="41" width="82" height="32"/>
+                    <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="TTP-CW-Eem">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                        <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                    </buttonCell>
+                    <connections>
+                        <action selector="cancelAction:" target="-2" id="vxb-Hc-vEM"/>
+                    </connections>
+                </button>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Jup-fA-nkB">
+                    <rect key="frame" x="224" y="41" width="142" height="32"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="130" id="D8Z-O9-1Wl"/>
+                    </constraints>
+                    <buttonCell key="cell" type="push" title="Output Collection" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="sr2-fZ-dwS">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="OutputCollectionAction:" target="-2" id="VPc-7L-duj"/>
+                    </connections>
+                </button>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="yfQ-31-Mmd">
+                    <rect key="frame" x="228" y="154" width="104" height="17"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Output Progress" id="swR-PH-dqH">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hlg-EB-07C">
+                    <rect key="frame" x="19" y="8" width="191" height="32"/>
+                    <buttonCell key="cell" type="push" title="Add Template from File..." bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Rse-WB-UWB">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                </button>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zgh-SQ-X7m">
+                    <rect key="frame" x="228" y="89" width="234" height="17"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="ODH-qq-kMY">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ccB-3a-NGC">
+                    <rect key="frame" x="228" y="191" width="154" height="17"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="150" id="OOv-If-Hzl"/>
+                    </constraints>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="No Template Picked" id="8kq-mt-N6u">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wD5-r3-biH">
+                    <rect key="frame" x="224" y="8" width="142" height="32"/>
+                    <buttonCell key="cell" type="push" title="Output Directory" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="GX9-b5-mrw">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="pickOutputDirectoryAction:" target="-2" id="fdc-pH-7Yr"/>
+                    </connections>
+                </button>
+                <customView translatesAutoresizingMaskIntoConstraints="NO" id="ulY-Ke-Knx" customClass="GBListBox" customModule="GeneralBookmarks" customModuleProvider="target">
+                    <rect key="frame" x="15" y="51" width="200" height="157"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="200" id="tsJ-88-hlu"/>
+                    </constraints>
+                </customView>
+            </subviews>
+            <constraints>
+                <constraint firstItem="hlg-EB-07C" firstAttribute="centerX" secondItem="ulY-Ke-Knx" secondAttribute="centerX" id="1Jt-A9-clP"/>
+                <constraint firstAttribute="bottom" secondItem="hlg-EB-07C" secondAttribute="bottom" constant="15" id="3MH-nQ-ZQ1"/>
+                <constraint firstAttribute="trailing" secondItem="ykw-qM-z90" secondAttribute="trailing" constant="20" id="3Yj-5U-jWF"/>
+                <constraint firstItem="Jup-fA-nkB" firstAttribute="top" secondItem="zgh-SQ-X7m" secondAttribute="bottom" constant="20" id="D3l-GZ-uCW"/>
+                <constraint firstItem="yfQ-31-Mmd" firstAttribute="leading" secondItem="ccB-3a-NGC" secondAttribute="leading" id="DaL-uj-jQL"/>
+                <constraint firstItem="VgD-fm-a6q" firstAttribute="leading" secondItem="Jup-fA-nkB" secondAttribute="trailing" constant="15" id="Ede-s7-FtM"/>
+                <constraint firstItem="VgD-fm-a6q" firstAttribute="centerY" secondItem="Jup-fA-nkB" secondAttribute="centerY" id="JVf-Qe-0dj"/>
+                <constraint firstItem="ulY-Ke-Knx" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="15" id="VPn-9z-WJF"/>
+                <constraint firstItem="yfQ-31-Mmd" firstAttribute="leading" secondItem="ulY-Ke-Knx" secondAttribute="trailing" constant="15" id="XSx-Qe-U24"/>
+                <constraint firstItem="zgh-SQ-X7m" firstAttribute="top" secondItem="ykw-qM-z90" secondAttribute="bottom" constant="10" id="ZtR-ho-IFR"/>
+                <constraint firstItem="ykw-qM-z90" firstAttribute="top" secondItem="yfQ-31-Mmd" secondAttribute="bottom" constant="20" id="bXH-b2-PWi"/>
+                <constraint firstItem="hlg-EB-07C" firstAttribute="top" secondItem="ulY-Ke-Knx" secondAttribute="bottom" constant="15" id="eH9-qj-Oap"/>
+                <constraint firstItem="Jup-fA-nkB" firstAttribute="leading" secondItem="ulY-Ke-Knx" secondAttribute="trailing" constant="15" id="j8W-lC-tUd"/>
+                <constraint firstItem="yfQ-31-Mmd" firstAttribute="top" secondItem="ccB-3a-NGC" secondAttribute="bottom" constant="20" id="jFT-Wc-Z5Z"/>
+                <constraint firstItem="zgh-SQ-X7m" firstAttribute="leading" secondItem="ykw-qM-z90" secondAttribute="leading" id="kcr-Ww-JTj"/>
+                <constraint firstItem="ccB-3a-NGC" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="20" id="nVg-rb-avy"/>
+                <constraint firstItem="ulY-Ke-Knx" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="20" id="sF7-Vg-Ng0"/>
+                <constraint firstItem="wD5-r3-biH" firstAttribute="centerY" secondItem="hlg-EB-07C" secondAttribute="centerY" id="uan-YG-RzY"/>
+                <constraint firstItem="ykw-qM-z90" firstAttribute="leading" secondItem="ulY-Ke-Knx" secondAttribute="trailing" constant="15" id="ufq-sc-gWa"/>
+                <constraint firstItem="wD5-r3-biH" firstAttribute="leading" secondItem="Jup-fA-nkB" secondAttribute="leading" id="uuY-29-Voq"/>
+                <constraint firstItem="zgh-SQ-X7m" firstAttribute="trailing" secondItem="ykw-qM-z90" secondAttribute="trailing" id="zJJ-mW-kwP"/>
+            </constraints>
+            <point key="canvasLocation" x="90" y="88"/>
+        </customView>
+    </objects>
+</document>
