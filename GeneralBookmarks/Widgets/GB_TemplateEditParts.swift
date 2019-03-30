@@ -3,7 +3,7 @@
 //  GeneralBookmarks
 //
 //  Created by David Faulks on 2017-12-29.
-//  Copyright © 2017-2018 dfaulks. All rights reserved.
+//  Copyright © 2017-2019 dfaulks. All rights reserved.
 //
 
 import Cocoa
@@ -119,8 +119,8 @@ class GB_TemplateEditParts: NSViewController, NSTextDelegate {
         // Do view setup here.
         self.defaultBackgroundColour = groupTemplateEdit.backgroundColor
         NotificationCenter.default.addObserver(self, selector: #selector(textDidChange), name: NSText.didChangeNotification, object: nil)
-        groupTemplateEdit.isAutomaticQuoteSubstitutionEnabled = false
-        majorLinkNavOverallEdit.isAutomaticQuoteSubstitutionEnabled = false
+        textViewRFix(textview: groupTemplateEdit)
+        textViewRFix(textview: majorLinkNavOverallEdit)
     }
     //===============================================================================
     // group template

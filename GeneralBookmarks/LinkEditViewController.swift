@@ -3,7 +3,7 @@
 //  GeneralBookmarks
 //
 //  Created by David Faulks on 2016-05-09.
-//  Copyright © 2016-2018 dfaulks. All rights reserved.
+//  Copyright © 2016-2019 dfaulks. All rights reserved.
 //
 // Last updated Dec 15, 2017
 

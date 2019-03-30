@@ -2,13 +2,16 @@
 //  GBListBox.swift
 //  GeneralBookmarks
 //
-//  Created by David Faulks on 2018-07-02.
-//  Copyright © 2018 dfaulks. All rights reserved.
+//  Created by David Faulks on 2019-07-02.
+//  Copyright © 2019 dfaulks. All rights reserved.
 //
 
 import Cocoa
 
-/* Intended to be a simple text-based list view, which is not provided in Cocoa. */
+/* Intended to be a simple text-based list view, which is not provided in Cocoa.
+ It uses an xib file because despite my attempts, I could not get scrollview + table
+ to work otherwise.
+*/
 
 @objc protocol GBListBoxDelegate {
     var itemCount:Int { get }
@@ -59,6 +62,12 @@ class GBListBox : NSView, NSTableViewDataSource, NSTableViewDelegate {
     var labelString:String {
         get { return topLabel.stringValue }
         set(newValue){ topLabel.stringValue = newValue }
+    }
+    
+    // property for isEnabled (applies to table)
+    var isEnabled:Bool {
+        get { return table.isEnabled }
+        set(value) { table.isEnabled = value }
     }
     
     // +++ [ Row Selection ] ++++++++++++++++++++++++++++++++++++++
@@ -162,7 +171,7 @@ class GBListBox : NSView, NSTableViewDataSource, NSTableViewDelegate {
         noSignal2 = true
         table!.deselectAll(self)
         table!.reloadData()
-        if refresh { table!.display() }
+        // if refresh { table!.display() }  // causes issues
         noSignal2 = false
     }
     
@@ -204,7 +213,7 @@ class GBListBox : NSView, NSTableViewDataSource, NSTableViewDelegate {
         reloadData(false)
         noSignal1 = true
         table!.selectRowIndexes(IndexSet(integer:row), byExtendingSelection: false)
-        table!.display()
+        table!.display() // NOTE : This line seems to cause problems with newer Xcode
         noSignal1 = false
     }
     

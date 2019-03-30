@@ -2,8 +2,8 @@
 //  GB_PageSplitData.swift
 //  GeneralBookmarks
 //
-//  Created by David Faulks on 2018-01-05.
-//  Copyright © 2018 dfaulks. All rights reserved.
+//  Created by David Faulks on 2019-01-05.
+//  Copyright © 2019 dfaulks. All rights reserved.
 //
 
 import Cocoa
@@ -39,6 +39,7 @@ class GB_PageSplitData: NSView {
     // saving data
     func saveDataToPageOutputter(_ target:GB_PageOutputter) {
         target.groupSetCount = columnCount
+        print("Column Count saveData: \(columnCount)")
         target.majorLinkSize = majorSiteSizeEdit.floatValue
         target.groupPadding = groupSizeBufferEdit.floatValue
     }
@@ -49,6 +50,7 @@ class GB_PageSplitData: NSView {
         let cc = source.groupSetCount
         if (cc < 0) || (cc > 9) { return false }
         columnCount = cc
+        print("Column Count loadData: \(cc)")
         columCountDisplay.stringValue = "\(cc)"
         // size of major group links
         let mgl = source.majorLinkSize

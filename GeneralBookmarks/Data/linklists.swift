@@ -3,7 +3,7 @@
 //  GeneralBookmarks
 //  Higher level groupings of links, including the class that holds an entire collection
 //  Created by David Faulks on 2016-04-28.
-//  Copyright © 2016-2018 dfaulks. All rights reserved.
+//  Copyright © 2016-2019 dfaulks. All rights reserved.
 //
 // last updated August 15, 2016
 

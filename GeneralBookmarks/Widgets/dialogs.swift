@@ -3,9 +3,9 @@
 //  GeneralBookmarks
 //
 //  Created by David Faulks on 2016-05-20.
-//  Copyright © 2016-2018 dfaulks. All rights reserved.
+//  Copyright © 2016-2019 dfaulks. All rights reserved.
 //
-// Last Updated March 18, 2018
+// Last Updated March 18, 2019
 
 import Foundation
 import Cocoa
@@ -26,6 +26,24 @@ func openFileDialog(_ inTitle:String, filetypes:[String]) -> String? {
         let result = dialog.url // Pathname of the file
         if (result != nil) { return result!.path }
         else { return nil }
+    }
+    else { return nil }
+}
+//---------------------------------------------------
+// opens a file open dialog, allows multiple selection and retusn urls
+func openFileDialogMulti(_ inTitle:String, filetypes:[String]) -> [URL]? {
+    let dialog = NSOpenPanel();
+    
+    dialog.title                   = inTitle
+    dialog.showsResizeIndicator    = true
+    dialog.showsHiddenFiles        = false
+    dialog.canChooseDirectories    = false;
+    dialog.canCreateDirectories    = true;
+    dialog.allowsMultipleSelection = true;
+    dialog.allowedFileTypes        = filetypes
+    
+    if (dialog.runModal() == NSApplication.ModalResponse.OK) {
+        return dialog.urls
     }
     else { return nil }
 }

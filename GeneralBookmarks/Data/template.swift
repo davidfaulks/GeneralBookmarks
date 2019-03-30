@@ -2,8 +2,8 @@
 //  template.swift
 //  GeneralBookmarks
 //
-//  Created by David Faulks on 2018-01-20.
-//  Copyright © 2018 dfaulks. All rights reserved.
+//  Created by David Faulks on 2019-01-20.
+//  Copyright © 2019 dfaulks. All rights reserved.
 //
 
 import Foundation
@@ -30,6 +30,7 @@ class GBTemplateOutputter: NSObject,NSCoding {
         collectionToOutput = collection
         // clearing out old partial info
         pageNav.clearPages()
+        pageToOutputIndex = -1
         // done
         return true;
     }

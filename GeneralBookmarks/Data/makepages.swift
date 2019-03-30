@@ -3,7 +3,7 @@
 //  GeneralBookmarks
 //
 //  Created by David Faulks on 2017-12-23.
-//  Copyright © 2017-2018 dfaulks. All rights reserved.
+//  Copyright © 2017-2019 dfaulks. All rights reserved.
 //
 // Classes that handle producing html output from input...
 // these handle page level and above
@@ -249,6 +249,7 @@ class GB_PageOutputter: NSObject,NSCoding {
         aCoder.encode(groupListFormatter, forKey:groupListFKey)
         // encoding simpler values
         aCoder.encode(overall,forKey:overallKey)
+        print("Encode Column Count: \(ccount)")
         aCoder.encode(ccount, forKey: columnCountKey)
         aCoder.encode(gpadding, forKey: groupPaddingKey)
         aCoder.encode(mlinksize, forKey: majorLinkSizeKey)
@@ -268,6 +269,7 @@ class GB_PageOutputter: NSObject,NSCoding {
         let temp_ccount = aDecoder.decodeInteger(forKey: columnCountKey)
         assert(temp_ccount > 0)
         ccount = temp_ccount
+        print("Decode Column Count: \(temp_ccount)")
         let temp_gpadding = aDecoder.decodeFloat(forKey: groupPaddingKey)
         assert(temp_gpadding > 0.0)
         gpadding = temp_gpadding

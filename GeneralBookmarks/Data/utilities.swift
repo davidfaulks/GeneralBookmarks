@@ -4,8 +4,8 @@
 //  GeneralBookmarks
 //  Non-gui related helper classes and utilities
 //  Created by David Faulks on 2016-04-30.
-//  Copyright © 2016-2018 dfaulks. All rights reserved.
-//  Last updated March 24, 2018
+//  Copyright © 2016-2019 dfaulks. All rights reserved.
+//  Last updated March 24, 2019
 
 import Foundation
 import AppKit
@@ -419,6 +419,15 @@ func moveItemsInArray<T>(_ array:inout Array<T>, fromIndexes:IndexSet, toIndex:I
     array.insert(contentsOf: itemsToMove, at: insertPosition)
     // done
     return true    
+}
+//==================================================================
+/* NSTextView does auto replace and spellchecking by default, and turning this off in the
+ interface builder has no effect. */
+func textViewRFix(textview:NSTextView) {
+    textview.isAutomaticTextReplacementEnabled = false
+    textview.isAutomaticDashSubstitutionEnabled = false
+    textview.isAutomaticQuoteSubstitutionEnabled = false
+    textview.isAutomaticSpellingCorrectionEnabled = false
 }
 
 //****************************************************************

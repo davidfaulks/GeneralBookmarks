@@ -2,8 +2,8 @@
 //  GeneralBookmarksApp.swift
 //  GeneralBookmarks
 //
-//  Created by David Faulks on 2018-06-25.
-//  Copyright © 2018 dfaulks. All rights reserved.
+//  Created by David Faulks on 2019-06-25.
+//  Copyright © 2019 dfaulks. All rights reserved.
 //
 // needed to enable keyboard shortcuts in NSTextFields
 

@@ -2,8 +2,8 @@
 //  GB_PageNavEdit.swift
 //  GeneralBookmarks
 //
-//  Created by David Faulks on 2018-01-12.
-//  Copyright © 2018 dfaulks. All rights reserved.
+//  Created by David Faulks on 2019-01-12.
+//  Copyright © 2019 dfaulks. All rights reserved.
 //
 
 import Cocoa

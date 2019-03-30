@@ -3,7 +3,7 @@
 //  GeneralBookmarks
 //
 //  Created by David Faulks on 2016-08-11.
-//  Copyright © 2016-2018 dfaulks. All rights reserved.
+//  Copyright © 2016-2019 dfaulks. All rights reserved.
 //
 
 import Cocoa
@@ -548,7 +548,9 @@ class ViewController: NSViewController,NSTextFieldDelegate {
         let toIndex = changeIndexes["to row"]!
         groupListDelegate!.changePage(UInt(toIndex))
         groupLinksDelegate!.changePage(UInt(toIndex))
-        let currentPage = docPointer!.document_data.listOfPages[toIndex]
+        let pagelist = docPointer!.document_data.listOfPages
+        if (pagelist.count == 0) { return }
+        let currentPage = pagelist[toIndex]
         leaveOffNavCheckBox.state = (currentPage.notInNav) ? .on : .off
     }
     

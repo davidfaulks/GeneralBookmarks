@@ -3,7 +3,7 @@
 //  GeneralBookmarks
 //
 //  Created by David Faulks on 2016-08-11.
-//  Copyright © 2016-2018 dfaulks. All rights reserved.
+//  Copyright © 2016-2019 dfaulks. All rights reserved.
 //
 
 import Cocoa
@@ -87,10 +87,15 @@ class GBTemplateDocument: NSDocument {
         else { document_data = tempCollection! }
     }
     
+    // saves the temple editor contents, if any
     func saveActiveDocument() -> Bool {
+        // here, the document is loaded but has no window (nothing to save)
+        if self.windowControllers.isEmpty { return false }
+        // getting the editor view, this should always work
         guard let vc = self.windowControllers[0].contentViewController as? GBTemplateEditView else {
             return false
         }
+        // saving
         _ = vc.saveDocument()
         return true
     }

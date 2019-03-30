@@ -2,8 +2,8 @@
 //  GB_TemplateEditPage.swift
 //  GeneralBookmarks
 //
-//  Created by David Faulks on 2018-01-04.
-//  Copyright © 2018 dfaulks. All rights reserved.
+//  Created by David Faulks on 2019-01-04.
+//  Copyright © 2019 dfaulks. All rights reserved.
 //
 
 import Cocoa
@@ -65,6 +65,7 @@ class GB_TemplateEditPage: NSViewController {
     }
     func savePageOutputter(target:GB_PageOutputter) {
         target.overall = pageTemplateEdit.string ?? ""
+        groupSplitEditPanel.saveDataToPageOutputter(target)
     }
     
     
@@ -74,7 +75,7 @@ class GB_TemplateEditPage: NSViewController {
         // Do view setup here.
         defaultBackgroundColour = pageTemplateEdit.backgroundColor
         NotificationCenter.default.addObserver(self, selector: #selector(textDidChange), name: NSText.didChangeNotification, object: nil)
-        pageTemplateEdit.isAutomaticQuoteSubstitutionEnabled = false // Interface Builder is buggy
+        textViewRFix(textview: pageTemplateEdit)
     }
     //=======================================================
     @IBAction func pageNameChanged(_ sender: Any) {

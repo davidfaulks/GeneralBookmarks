@@ -3,7 +3,7 @@
 //  GeneralBookmarks
 //  Delegates and other interface objects to the data
 //  Created by David Faulks on 2016-05-01.
-//  Copyright © 2016-2018 dfaulks. All rights reserved.
+//  Copyright © 2016-2019 dfaulks. All rights reserved.
 //  last updated August 9, 2016
 
 import Foundation
