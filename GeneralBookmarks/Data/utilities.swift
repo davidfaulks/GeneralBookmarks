@@ -245,7 +245,7 @@ func stringToFilename(source:String) -> String {
 //-----------------------------------------------------------------
 // tests if a string has one of a set of prefixes, case insensetive
 func hasAllowedPrefix(_ testURL:String) -> Bool {
-    let allowedPrefixes = ["http:","https:","ftp:","ftps:","gopher:"]
+    let allowedPrefixes = ["http:","https:","ftp:","ftps:","gopher:","sftp:"]
     let lowercaseInput = testURL.lowercased(with: Locale(identifier: "en_US"))
     // loop testing
     for currPrefix in allowedPrefixes {
@@ -428,6 +428,15 @@ func textViewRFix(textview:NSTextView) {
     textview.isAutomaticDashSubstitutionEnabled = false
     textview.isAutomaticQuoteSubstitutionEnabled = false
     textview.isAutomaticSpellingCorrectionEnabled = false
+}
+//==================================================================
+// strips protocol from url string
+func stripProtocol(inURL:String) -> String {
+    let f = inURL.split(separator: ":", maxSplits: 1, omittingEmptySubsequences: false)
+    if f.count < 2 { return inURL }
+    let second = String(f[1])
+    if second.hasPrefix("//") { return String(second.dropFirst(2)) }
+    else { return second }
 }
 
 //****************************************************************

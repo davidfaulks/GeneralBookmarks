@@ -11,6 +11,7 @@ import Cocoa
 class ViewController: NSViewController,NSTextFieldDelegate {
 
     // GUI elements
+    @IBOutlet weak var progressWidget: NSProgressIndicator!
     @IBOutlet weak var messageDisplay: NSTextField!
     
     // link tables
@@ -120,6 +121,7 @@ class ViewController: NSViewController,NSTextFieldDelegate {
     fileprivate let deleteLinkTitle = "Delete this Link"
     fileprivate let openLinkTitle = "Open Link in a browser"
     fileprivate let checkLinksTitle = "Start checking Links"
+    fileprivate let filterOrderTitle = "Order and Remove Duplicates"
     
     
     // the tables and lists have right/ctrl click popup menus
@@ -196,6 +198,12 @@ class ViewController: NSViewController,NSTextFieldDelegate {
         checkUnsortedLinksMenuItem.target = self
         checkUnsortedLinksMenuItem.action = #selector(handleMenuUnsortedCheckLinks)
         unsortedLinksPopupMenu!.addItem(checkUnsortedLinksMenuItem)
+        
+        let filterAndOrderUnsortedLinksMenuItem = NSMenuItem()
+        filterAndOrderUnsortedLinksMenuItem.title = filterOrderTitle
+        filterAndOrderUnsortedLinksMenuItem.target = self
+        filterAndOrderUnsortedLinksMenuItem.action = #selector(handleMenuUnsortedFilerAndOrder)
+        unsortedLinksPopupMenu!.addItem(filterAndOrderUnsortedLinksMenuItem)
         
         unsortedLinksTable.menu = unsortedLinksPopupMenu
         
@@ -430,11 +438,34 @@ class ViewController: NSViewController,NSTextFieldDelegate {
         unsortedLinksTable.launchClickedRowInBrowser()
     }
     
-    // unsorted links list: starte checking all of the links
+    // unsorted links list: start checking all of the links
     @objc func handleMenuUnsortedCheckLinks(_ sender:AnyObject?) {
         _ = appPtr.groupChecker.setUnsortedToCheck(collection: docPointer!.document_data)
-        messageDisplay.stringValue = "Checking unsorted links"
+        startProgress(message: "Checking unsorted links...")
         _ = appPtr.groupChecker.startChecks()
+    }
+    
+    private var usort_active = false
+    // unsorted links list: remove duplicates and order (sort)
+    @objc func handleMenuUnsortedFilerAndOrder(_ sender:AnyObject?) {
+        // before we start, disable the unsorted links
+        usort_active = true
+        unsortedLinksTable.isEnabled = false
+        unsortedLinksTable.alphaValue = 0.7
+        startProgress(message: "Filtering and Ordering unsorted Links..." )
+        // launch the filer and order process
+        DispatchQueue.global(qos: .userInitiated).async {
+            self.docPointer!.document_data.filterAndOrderUnsortedLinks()
+            DispatchQueue.main.async {
+                self.unsortedLinksTable.alphaValue = 1.0
+                self.unsortedLinksTable.isEnabled = true
+                self.usort_active = false
+                self.stopProgress(message:"Unsorted Links have been Filtered and Ordered." )
+                self.unsortedLinksTable.reloadAndSetIndex(0)
+            }
+        }
+        
+        
     }
     
     // current group links list: open site in browser (using the first url) {
@@ -445,7 +476,7 @@ class ViewController: NSViewController,NSTextFieldDelegate {
     @objc func handleMenuCurrentGroupCheckLinks(_ sender:AnyObject?) {
         let currGroup = groupLinksDelegate!.currentGroupLink!
         _ = appPtr.groupChecker.setGroupToCheck(group: currGroup)
-        messageDisplay.stringValue = "Checking links in \(currGroup.groupName)"
+        startProgress(message: "Checking links in \(currGroup.groupName)")
         _ = appPtr.groupChecker.startChecks()
     }
     
@@ -510,6 +541,12 @@ class ViewController: NSViewController,NSTextFieldDelegate {
             if docPointer == nil { return false }
             let unscount = docPointer!.document_data.unsortedLinkCount
             return (appPtr.groupChecker.notActive && (unscount > 0))
+        }
+        if menuItem == unsortedLinksPopupMenu!.item(withTitle: filterOrderTitle) {
+            if docPointer == nil { return false }
+            if usort_active { return false }
+            let unscount = docPointer!.document_data.unsortedLinkCount
+            return (appPtr.groupChecker.notActive && (unscount > 1))
         }
         // current group validation
         if menuItem == currentGroupLinksPopupMenu!.item(withTitle: deleteLinkTitle) {
@@ -624,7 +661,7 @@ class ViewController: NSViewController,NSTextFieldDelegate {
         let linkData = notification.userInfo as! [String:Any]
         guard let gname = linkData["listName"] as? String else { return }
         DispatchQueue.main.async {
-            self.messageDisplay.stringValue = "Link check done for \(gname)"
+            self.stopProgress(message: "Link check done for \(gname)")
         }
     }
     
@@ -634,11 +671,11 @@ class ViewController: NSViewController,NSTextFieldDelegate {
     @IBAction func ImportLinksFromHTML(_ sender:AnyObject) {
         let importPath = openFileDialog("Pick an HTML file to get links from.", filetypes: ["htm","html"])
         if importPath != nil {
-            messageDisplay.stringValue = "Loading File: " + importPath!
+            startProgress(message: "Loading File: " + importPath!)
             let loadData = loadHTMLFileToString(importPath!)
             // if loading the HTML file fails, we display an error popup
             if !(loadData.0) {
-                messageDisplay.stringValue = "Loading file failed!"
+                stopProgress(message: "Loading file failed!")
                 let infoMsg = "Loading the file: \(loadData) failed,\n" + "Error : \(loadData.1)"
                 showModalMessage("Loading File Failed", info:infoMsg , style: .warning, btnLabel: "Sorry")
             }
@@ -646,22 +683,21 @@ class ViewController: NSViewController,NSTextFieldDelegate {
             else {
                 // parsing for links
                 messageDisplay.stringValue = "File loaded. Now extracting links..."
-                print("ImportLinkFromHTML A")
                 let resLinks = extractLinksFromHTML(loadData.1)
                 // displaying the results
-                messageDisplay.stringValue += " Done."
                 let linkCountStr:String
                 if resLinks.count == 0 { linkCountStr = "No Links" }
                 else if resLinks.count == 1 { linkCountStr = "One Link" }
                 else { linkCountStr = "\(resLinks.count) Links" }
                 let infoMsg = "\(linkCountStr) have been extracted."
+                stopProgress(message: infoMsg)
                 showModalMessage("Link extraction done", info: infoMsg, style: .informational , btnLabel: "Ok")
                 // inserting the results in the collection
                 if resLinks.count > 0 {
-                    messageDisplay.stringValue = "Adding the new Links to Unsorted Links..."
+                    startProgress(message: "Adding the new Links to Unsorted Links...")
                     docPointer!.document_data.appendLinkArray(resLinks)
                     unsortedLinksTable!.reloadAfterAppend()
-                    messageDisplay.stringValue += " Done."
+                    stopProgress(message: "New links have been added to Unsorted Links.")
                 }
             }
         }
@@ -697,6 +733,8 @@ class ViewController: NSViewController,NSTextFieldDelegate {
         linkEntryAccessoryView = loadLinkEntryAccesory()
         collectionNameEdit.delegate = self
         setupContextMenus()
+        progressWidget.isIndeterminate = true
+        progressWidget.isHidden = true
     }
     override func viewWillAppear() {
         super.viewWillAppear()
@@ -729,6 +767,19 @@ class ViewController: NSViewController,NSTextFieldDelegate {
         if segue.identifier == siteEditorID {
             siteEditorPointer = segue.destinationController as? LinkEditViewController
         }
+    }
+    
+    // to make starting and stopping the progress indicator one liners
+    private func startProgress(message:String) {
+        progressWidget.isHidden = false
+        messageDisplay.stringValue = message
+        progressWidget.startAnimation(nil)
+    }
+    
+    private func stopProgress(message:String) {
+        progressWidget.stopAnimation(nil)
+        progressWidget.isHidden = true
+        messageDisplay.stringValue = message
     }
 
 }

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14490.70"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -232,7 +232,7 @@
                                     <rect key="frame" x="1" y="1" width="402" height="156"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="53" viewBased="YES" id="dl4-G3-awL">
+                                        <tableView verticalHuggingPriority="750" ambiguous="YES" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="53" viewBased="YES" id="dl4-G3-awL">
                                             <rect key="frame" x="0.0" y="0.0" width="402" height="156"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
@@ -402,11 +402,11 @@
             <objects>
                 <viewController id="5gI-5U-AMq" customClass="ViewController" customModule="GeneralBookmarks" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="ERx-hH-rdd">
-                        <rect key="frame" x="0.0" y="0.0" width="974" height="532"/>
+                        <rect key="frame" x="0.0" y="0.0" width="981" height="532"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <containerView translatesAutoresizingMaskIntoConstraints="NO" id="1vs-RF-aPx">
-                                <rect key="frame" x="15" y="322" width="686" height="200"/>
+                                <rect key="frame" x="15" y="322" width="691" height="200"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="200" id="b3B-hT-kmp"/>
                                 </constraints>
@@ -423,13 +423,13 @@
                                 </textFieldCell>
                             </textField>
                             <scrollView horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eZC-DI-2Ud">
-                                <rect key="frame" x="15" y="55" width="334" height="237"/>
+                                <rect key="frame" x="15" y="55" width="336" height="237"/>
                                 <clipView key="contentView" id="1Jk-ia-ADb">
-                                    <rect key="frame" x="1" y="0.0" width="317" height="236"/>
+                                    <rect key="frame" x="1" y="0.0" width="319" height="236"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnReordering="NO" autosaveColumns="NO" headerView="LTh-IO-26e" id="t2J-7C-J6m" customClass="GB_LinkTableView" customModule="GeneralBookmarks" customModuleProvider="target">
-                                            <rect key="frame" x="0.0" y="0.0" width="317" height="213"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="319" height="213"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -447,7 +447,7 @@
                                                         <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
                                                 </tableColumn>
-                                                <tableColumn editable="NO" width="218" minWidth="40" maxWidth="1000" id="kcP-13-vFC">
+                                                <tableColumn editable="NO" width="220" minWidth="40" maxWidth="1000" id="kcP-13-vFC">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" title="Link Label">
                                                         <font key="font" metaFont="smallSystem"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -481,16 +481,16 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                                 <scroller key="verticalScroller" verticalHuggingPriority="750" horizontal="NO" id="Pgn-fq-Ma6">
-                                    <rect key="frame" x="318" y="23" width="15" height="213"/>
+                                    <rect key="frame" x="320" y="23" width="15" height="213"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                                 <tableHeaderView key="headerView" id="LTh-IO-26e">
-                                    <rect key="frame" x="0.0" y="0.0" width="317" height="23"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="319" height="23"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableHeaderView>
                             </scrollView>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="E7Q-Nw-qGs">
-                                <rect key="frame" x="367" y="297" width="95" height="17"/>
+                                <rect key="frame" x="369" y="297" width="95" height="17"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Current Group:" id="FmV-0g-m4U">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -498,13 +498,13 @@
                                 </textFieldCell>
                             </textField>
                             <scrollView horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FeT-oC-MOF">
-                                <rect key="frame" x="367" y="55" width="334" height="237"/>
+                                <rect key="frame" x="369" y="55" width="337" height="237"/>
                                 <clipView key="contentView" id="fCI-OZ-eQh">
-                                    <rect key="frame" x="1" y="0.0" width="317" height="236"/>
+                                    <rect key="frame" x="1" y="0.0" width="320" height="236"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="sequential" columnReordering="NO" autosaveColumns="NO" headerView="Kjk-R5-Shr" id="7kT-2n-tLY" customClass="GB_LinkTableView" customModule="GeneralBookmarks" customModuleProvider="target">
-                                            <rect key="frame" x="0.0" y="0.0" width="317" height="213"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="213"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -522,7 +522,7 @@
                                                         <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
                                                 </tableColumn>
-                                                <tableColumn editable="NO" width="218" minWidth="40" maxWidth="1000" id="pr0-QX-Vt7">
+                                                <tableColumn editable="NO" width="221" minWidth="40" maxWidth="1000" id="pr0-QX-Vt7">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" title="Link Label">
                                                         <font key="font" metaFont="smallSystem"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -557,11 +557,11 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                                 <scroller key="verticalScroller" verticalHuggingPriority="750" horizontal="NO" id="vaE-LU-f1L">
-                                    <rect key="frame" x="318" y="23" width="15" height="213"/>
+                                    <rect key="frame" x="321" y="23" width="15" height="213"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                                 <tableHeaderView key="headerView" id="Kjk-R5-Shr">
-                                    <rect key="frame" x="0.0" y="0.0" width="317" height="23"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="23"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableHeaderView>
                             </scrollView>
@@ -588,7 +588,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Yx2-oL-CZB">
-                                <rect key="frame" x="448" y="18" width="328" height="17"/>
+                                <rect key="frame" x="454" y="18" width="329" height="17"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="some sort of treat" id="WGd-66-FQN">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -596,13 +596,13 @@
                                 </textFieldCell>
                             </textField>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="ho5-u8-TfH" customClass="GBListBox" customModule="GeneralBookmarks" customModuleProvider="target">
-                                <rect key="frame" x="717" y="322" width="241" height="200"/>
+                                <rect key="frame" x="722" y="322" width="243" height="200"/>
                             </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="8u7-6H-qGD" customClass="GBListBox" customModule="GeneralBookmarks" customModuleProvider="target">
-                                <rect key="frame" x="716" y="55" width="243" height="237"/>
+                                <rect key="frame" x="721" y="55" width="245" height="237"/>
                             </customView>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kjG-42-Xj1">
-                                <rect key="frame" x="787" y="24" width="174" height="18"/>
+                                <rect key="frame" x="794" y="24" width="174" height="18"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="170" id="Uad-YJ-FKY"/>
                                 </constraints>
@@ -614,6 +614,9 @@
                                     <action selector="leavePageOffNavCheckboxChange:" target="5gI-5U-AMq" id="fij-In-MDF"/>
                                 </connections>
                             </button>
+                            <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="LIW-ok-Mdf">
+                                <rect key="frame" x="435" y="18" width="16" height="16"/>
+                            </progressIndicator>
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="ho5-u8-TfH" secondAttribute="trailing" constant="16" id="1Ly-lq-gfz"/>
@@ -623,6 +626,7 @@
                             <constraint firstItem="ho5-u8-TfH" firstAttribute="bottom" secondItem="1vs-RF-aPx" secondAttribute="bottom" id="AdF-zG-ZH2"/>
                             <constraint firstAttribute="trailing" secondItem="8u7-6H-qGD" secondAttribute="trailing" constant="15" id="Dcy-Gu-6ae"/>
                             <constraint firstItem="eZC-DI-2Ud" firstAttribute="top" secondItem="1vs-RF-aPx" secondAttribute="bottom" constant="30" id="HgF-Ov-iIr"/>
+                            <constraint firstItem="LIW-ok-Mdf" firstAttribute="centerY" secondItem="lrB-Rb-LrB" secondAttribute="centerY" id="L0x-Ay-2ai"/>
                             <constraint firstItem="1vs-RF-aPx" firstAttribute="leading" secondItem="ERx-hH-rdd" secondAttribute="leading" constant="15" id="LCp-C7-jKy"/>
                             <constraint firstItem="FeT-oC-MOF" firstAttribute="width" secondItem="eZC-DI-2Ud" secondAttribute="width" id="M9J-EC-ZPl"/>
                             <constraint firstItem="kjG-42-Xj1" firstAttribute="leading" secondItem="Yx2-oL-CZB" secondAttribute="trailing" constant="15" id="MmU-Id-wb9"/>
@@ -637,11 +641,12 @@
                             <constraint firstItem="OdW-Qc-wls" firstAttribute="leading" secondItem="eZC-DI-2Ud" secondAttribute="leading" constant="2" id="bog-Wh-7w8"/>
                             <constraint firstItem="ho5-u8-TfH" firstAttribute="leading" secondItem="1vs-RF-aPx" secondAttribute="trailing" constant="16" id="cp5-q3-zOz"/>
                             <constraint firstItem="ho5-u8-TfH" firstAttribute="top" secondItem="1vs-RF-aPx" secondAttribute="top" id="e2e-LB-JIT"/>
+                            <constraint firstItem="LIW-ok-Mdf" firstAttribute="leading" secondItem="lrB-Rb-LrB" secondAttribute="trailing" constant="15" id="eBD-fN-La1"/>
                             <constraint firstItem="FeT-oC-MOF" firstAttribute="trailing" secondItem="1vs-RF-aPx" secondAttribute="trailing" id="eRq-Q6-991"/>
                             <constraint firstItem="Yx2-oL-CZB" firstAttribute="centerY" secondItem="lrB-Rb-LrB" secondAttribute="centerY" id="gS6-lz-Jet"/>
-                            <constraint firstItem="Yx2-oL-CZB" firstAttribute="leading" secondItem="lrB-Rb-LrB" secondAttribute="trailing" constant="30" id="gsH-pr-WH2"/>
                             <constraint firstAttribute="bottom" secondItem="eZC-DI-2Ud" secondAttribute="bottom" constant="55" id="iH9-tq-d1X"/>
                             <constraint firstItem="8u7-6H-qGD" firstAttribute="leading" secondItem="FeT-oC-MOF" secondAttribute="trailing" constant="15" id="izS-oL-G4F"/>
+                            <constraint firstItem="Yx2-oL-CZB" firstAttribute="leading" secondItem="LIW-ok-Mdf" secondAttribute="trailing" constant="5" id="ks4-gs-2OD"/>
                             <constraint firstAttribute="bottom" secondItem="lrB-Rb-LrB" secondAttribute="bottom" constant="15" id="m44-FM-B96"/>
                             <constraint firstItem="kjG-42-Xj1" firstAttribute="top" secondItem="8u7-6H-qGD" secondAttribute="bottom" constant="15" id="mWQ-z3-aTm"/>
                             <constraint firstItem="eZC-DI-2Ud" firstAttribute="top" secondItem="OdW-Qc-wls" secondAttribute="bottom" constant="5" id="nmF-gD-Cdh"/>
@@ -658,6 +663,7 @@
                         <outlet property="leaveOffNavCheckBox" destination="kjG-42-Xj1" id="gCU-kR-KlS"/>
                         <outlet property="messageDisplay" destination="Yx2-oL-CZB" id="GwT-2a-WR8"/>
                         <outlet property="pagePickerList" destination="ho5-u8-TfH" id="4pP-VA-ugi"/>
+                        <outlet property="progressWidget" destination="LIW-ok-Mdf" id="15z-BP-G02"/>
                         <outlet property="siteEditorContainer" destination="1vs-RF-aPx" id="gWW-NI-tKw"/>
                         <outlet property="unsortedLinksLabel" destination="OdW-Qc-wls" id="sON-ec-ZTU"/>
                         <outlet property="unsortedLinksTable" destination="t2J-7C-J6m" id="U24-J9-wC5"/>

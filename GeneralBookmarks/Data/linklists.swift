@@ -191,6 +191,38 @@ class GB_LinkCollection: NSObject,NSCoding {
         return true
     }
     
+    // filtering and ordering unsorted links
+    func filterAndOrderUnsortedLinks() {
+        if unsortedLinks.count < 2 { return } // trivial do nothing
+        // we go over the list to figure out what we might remove first
+        var removeDuplicates = false
+        print("Start Links: \(unsortedLinks.count)")
+        var keepLink = Array(repeating: true , count: unsortedLinks.count)
+        for odex in 0..<(unsortedLinks.count-1) {
+            for idex in (odex+1)..<unsortedLinks.count {
+                if !keepLink[idex] { continue }
+                let compres = checkForSameURLs(linkone: unsortedLinks[odex], linktwo: unsortedLinks[idex])
+                if compres == .all {
+                    removeDuplicates = true
+                    keepLink[idex] = false
+                }
+            }
+        }
+        // producing a new list for sorting
+        var listToSort:[GB_SiteLink] = []
+        if !removeDuplicates { listToSort = unsortedLinks }
+        else {
+            for cdex in 0..<unsortedLinks.count {
+                if keepLink[cdex] { listToSort.append(unsortedLinks[cdex]) }
+            }
+        }
+        // sorting
+        listToSort.sort(by: { $0.orderedBefore($1) } )
+        // finishing
+        unsortedLinks = listToSort
+        print("End Links: \(unsortedLinks.count)")
+        updateUnsortedMapAfterIndex(0)
+    }
     
     //++++++++++++++++++++++++++++++++++++++++++++++++++++
     // pulling out a group from a certain page

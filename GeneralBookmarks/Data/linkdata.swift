@@ -65,7 +65,8 @@ class GB_SiteLink : NSObject,NSCoding {
     // the default initializer gives an empty SiteLink, but normally there is at least one URL
     convenience init(url:String, linkLabel inLinkLabel:String) {
         self.init();
-        self.appendUrlAndLabel(url: url, label: inLinkLabel)
+        let apr = self.appendUrlAndLabel(url: url, label: inLinkLabel)
+        assert(apr,"Initial url or label is empty (this is not allowed).")
     }
     
     // ++++ [ Coding related constants and Methods ] +++++++++++++
@@ -98,7 +99,7 @@ class GB_SiteLink : NSObject,NSCoding {
         linkLabels = aDecoder.decodeObject(forKey: linkLabelsKey) as! Array<String>
         let statusStrings = aDecoder.decodeObject(forKey: linkStatusesKey) as! Array<String>
         if (statusStrings.count != linkURLs.count) {
-            if (statusStrings.count != linkURLs.count) { NSLog("BadAAAAA")}
+            assert(statusStrings.count == linkURLs.count, "Status string count does not match URL count!");
             linkStatuses = Array(repeating: .Unchecked, count: linkURLs.count)
         }
         else {
@@ -112,7 +113,7 @@ class GB_SiteLink : NSObject,NSCoding {
         }
         important = aDecoder.decodeBool(forKey: importantKey)
         depreciated = aDecoder.decodeBool(forKey: depreciatedKey)
-        if (linkURLs.count != linkStatuses.count) { NSLog("Bad!") }
+        assert(linkURLs.count == linkStatuses.count,"Number of links and numer of statuses do not match!")
     }
     
     
@@ -167,8 +168,8 @@ class GB_SiteLink : NSObject,NSCoding {
         defer { mutex.unlock() }
 
         if linkStatuses.count != newStatuses.count {
-            NSLog("replaceStatuses A: \(linkStatuses.count)")
-            NSLog("replaceStatuses B: \(newStatuses.count)")
+            print("replaceStatuses A: \(linkStatuses.count)")
+            print("replaceStatuses B: \(newStatuses.count)")
             return false
         }
         linkStatuses = newStatuses
@@ -264,10 +265,57 @@ class GB_SiteLink : NSObject,NSCoding {
         linkLabels.insert(sourceLabel, at:insertIndex)
         linkStatuses.insert(sourceStatus, at: insertIndex)
     }
+    
+    // +++ [ Extra ] +++
+    // for use in sorting, sort by first url
+    func orderedBefore(_ second:GB_SiteLink) -> Bool {
+        // trivial special case: sorting empty objects (always after non-empty)
+        if isEmpty { return false }
+        else if second.isEmpty { return true }
+        // we try to remove the protocol before doing string comparison
+        let link1 = stripProtocol(inURL: linkURLs[0])
+        let link2 = stripProtocol(inURL: second.linkURLs[0])
+        // finally, compare
+        return link1 < link2
+    }
    
 }
 //==========================================================
-/* Now, a class for holding multiple links */
+// function for checking if two GB_SiteLink objects have any identical URLS
+enum SameURLResult { case none; case some; case all}
+
+func checkForSameURLs(linkone:GB_SiteLink, linktwo:GB_SiteLink) -> SameURLResult {
+    // trivial case 1
+    if linkone.isEmpty || linktwo.isEmpty { return .none }
+    // one URL makes things simpler
+    if (linkone.linkCount == 1) && (linktwo.linkCount == 1) {
+        let urleq = linkone.linkURLs[0] == linktwo.linkURLs[0]
+        return (urleq) ? (.all) : (.none)
+    }
+    /* Multiple URLS makes for extra complication, The method below will handle
+    cases where internal URLS are identical as well. */
+    var onematch = Array(repeating: false, count: linkone.linkCount)
+    var twomatch = Array(repeating: false, count: linktwo.linkCount)
+    for onedex in 0..<linkone.linkCount {
+        for twodex in 0..<linktwo.linkCount {
+            let ceq = linkone.linkURLs[onedex] == linktwo.linkURLs[twodex]
+            if ceq {
+                onematch[onedex] = true
+                twomatch[twodex] = true
+            }
+        }
+    }
+    // checking the match arrays to get the final result
+    let onetrue = onematch.filter({$0 == true}).count
+    let twotrue = twomatch.filter({$0 == true}).count
+    if (onetrue == 0) && (twotrue == 0) { return .none }
+    else if (onetrue == linkone.linkCount) && (twotrue == linktwo.linkCount) { return .all }
+    else { return .some}
+}
+//==========================================================
+/* Now, a class for holding multiple links. In addition to a simple list,
+we also include a map, so we can find the index from the object (this is
+useful while link checking, to find the index even if the link is moved). */
 class GB_LinkGroup : NSObject, NSCoding {
     
     // the data (name, and list of links)
