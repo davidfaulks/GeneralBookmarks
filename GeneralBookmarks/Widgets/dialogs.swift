@@ -4,8 +4,6 @@
 //
 //  Created by David Faulks on 2016-05-20.
 //  Copyright © 2016-2019 dfaulks. All rights reserved.
-//
-// Last Updated March 18, 2019
 
 import Foundation
 import Cocoa

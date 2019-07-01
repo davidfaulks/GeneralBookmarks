@@ -4,8 +4,7 @@
 //
 //  Created by David Faulks on 2016-05-09.
 //  Copyright © 2016-2019 dfaulks. All rights reserved.
-//
-// Last updated Dec 15, 2017
+
 
 import Cocoa
 //************************************************************************
@@ -13,6 +12,7 @@ import Cocoa
 let LinkTextChangedNotification = NSNotification.Name(rawValue: "LinkTextChangedNotification")
 let fromLabelEditKey = "From Label Edit"
 let newTextKey = "The New Text"
+let rowIndexKey = "Index of Changed Row"
 let LinkDataChangedNotification = NSNotification.Name(rawValue: "LinkDataChangedNotification")
 //========================================================================
 
@@ -32,15 +32,21 @@ class GB_LabelUrlTableCellView : NSTableCellView, NSTextFieldDelegate {
         // getting the changed text
         let changedText = (fromLabel) ? (linkLabelEdit.stringValue) : (linkURLEdit.stringValue)
         // building the user info
-        let messageInfo:[String:AnyObject] = [fromLabelEditKey:fromLabel as AnyObject,newTextKey:changedText as AnyObject]
+        let messageInfo:[String:AnyObject] = [
+            fromLabelEditKey:fromLabel as AnyObject,
+            newTextKey:changedText as AnyObject,
+            rowIndexKey:(NSNumber(value: row) as AnyObject)
+        ]
         // sending the notification
           NotificationCenter.default.post(name: LinkTextChangedNotification, object: self, userInfo: messageInfo)
     }
+    private(set) var row:Int = -1
     
     // because there is no viewDidLoad for table cell views
-    func setup() {
+    func setup(row_info:Int) {
         linkLabelEdit.delegate = self
         linkURLEdit.delegate = self
+        row = row_info
     }
     
 }
@@ -61,6 +67,7 @@ class LinkEditViewController: NSViewController,NSTableViewDelegate, NSTableViewD
     
     // +++ [ The data being displayed ] +++++++++++++++++++
     fileprivate(set) var displayedSite:GB_SiteLink? = nil
+    private var displayedList:GB_LinkCollection? = nil
     fileprivate(set) var displayedLinkIndex:Int = -1
     fileprivate(set) var fromUnsorted = false
     // extra pointer
@@ -141,12 +148,12 @@ class LinkEditViewController: NSViewController,NSTableViewDelegate, NSTableViewD
     @objc func handleLinkTextChangedNotification(_ notification: Notification) {
         // extracting the notification data
         let cellFrom = notification.object as! GB_LabelUrlTableCellView
+        let linkRow = linksDisplayTable.row(for: cellFrom)
+        if (linkRow < 0) { return } // notification is not for this list
         let notifyDict = notification.userInfo as! [String:AnyObject]
         let labelChanged = notifyDict[fromLabelEditKey] as! Bool
         let newText = notifyDict[newTextKey] as! String
-        // finding the index (row) of the link it the site
-        let linkRow = linksDisplayTable.row(for: cellFrom)
-        assert(linkRow>=0)
+
         let changeDone:Bool
         // updating the data
         if labelChanged {
@@ -201,7 +208,7 @@ class LinkEditViewController: NSViewController,NSTableViewDelegate, NSTableViewD
             }
             outputEditView!.linkLabelEdit.stringValue = displayedSite!.getLinkLabelAtIndex(row)
             outputEditView!.linkURLEdit.stringValue = displayedSite!.getUrlAtIndex(row)
-            outputEditView!.setup()
+            outputEditView!.setup(row_info:row)
             return outputEditView
         }
         else { return nil }
@@ -305,7 +312,7 @@ class LinkEditViewController: NSViewController,NSTableViewDelegate, NSTableViewD
     // validating the menu items
     override func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
         if menuItem === linkTablePopupMenu!.item(withTitle: deleteLinkTag) {
-            return (displayedSite!.linkCount > 1)
+            return (displayedSite != nil) ? (displayedSite!.linkCount > 1) : false
         }
         return true
     }
@@ -321,7 +328,7 @@ class LinkEditViewController: NSViewController,NSTableViewDelegate, NSTableViewD
     }
     
     @IBAction func checkButtonAction(_ sender: Any) {
-        checker.launchCheck(urldata: displayedSite!)
+        checker.launchCheck(urldata: displayedSite!, sourcePtr: displayedList!)
         setCheckingWidgets(isChecking: true)
     }
     
@@ -365,6 +372,10 @@ class LinkEditViewController: NSViewController,NSTableViewDelegate, NSTableViewD
         setupPopupMenu()
     }
     
-   
+    func setLinkCollection(_ collection:GB_LinkCollection) -> Bool {
+        if (displayedList != nil) { return false }
+        displayedList = collection
+        return true
+    }
     
 }

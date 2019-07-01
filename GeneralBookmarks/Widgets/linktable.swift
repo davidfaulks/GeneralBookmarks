@@ -69,7 +69,6 @@ class GB_LinkTableView : NSTableView {
             }
             selectedIndexes = selectedRowIndexes
         }
-
     }
     //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     public func launchInBrowser(row:Int) -> Bool {
@@ -290,12 +289,21 @@ class GB_LinkTableView : NSTableView {
             let displ:UInt? = (newSelectionData.1) ? UInt(newSelectionData.0) : nil
             changeSelection(IndexSet(integer:newSelectionData.0), newDisplayedLink: displ, reload: true)
         }
-            // reloading and changing the selection data to nothing
+        // reloading and changing the selection data to nothing
         else {
             reloadNoSelect()
             if newSelectionData.1 { changeDisplayedLink(nil) }
         }
         return true;
+    }
+    // delete currently selected rows
+    func deleteSelectedRows() -> Bool {
+        if selectedRowIndexes.count != 0 {
+            _ = deleteTheseRowsInTable(selectedRowIndexes)
+            selectedIndexes = selectedRowIndexes
+            return true
+        }
+        else { return false }
     }
     
     // helper method to change selection and displayed link programmatically
@@ -306,7 +314,7 @@ class GB_LinkTableView : NSTableView {
         selectRowIndexes(newSelected, byExtendingSelection: false)
         selectedIndexes = newSelected
         // handling the displayed link
-        if newDisplayedLink != displayedLinkIndex { changeDisplayedLink(newDisplayedLink) }
+        changeDisplayedLink(newDisplayedLink)
         useSelectionChangeHander = true
     }
     //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

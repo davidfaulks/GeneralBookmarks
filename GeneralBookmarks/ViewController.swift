@@ -92,15 +92,17 @@ class ViewController: NSViewController,NSTextFieldDelegate {
         pageListDelegate!.sourceListFromDrop = groupPickerList
     }
     
+    // to shorten things
+    private func NAdd(sel:Selector, name:NSNotification.Name, source: Any?) {
+        NotificationCenter.default.addObserver(self, selector: sel, name: name, object: source)
+    }
+    
     fileprivate func setupNotificationObservers() {
-        NotificationCenter.default.addObserver(self,selector: #selector(handleLinkClickedNotification),
-                                                         name: LinkClickedNotification,object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleLinkDataChangedNotification),
-                                                         name: LinkDataChangedNotification, object: nil)
-        NotificationCenter.default.addObserver(self,selector: #selector(handleGroupChangeNotification),
-                                                         name: GroupChangedNotification,object: nil)
-        NotificationCenter.default.addObserver(self,selector: #selector(handlePageChangeNotification),
-                                                         name: PageChangedNotification,object: nil)
+        NAdd(sel: #selector(handleLinkClickedNotification), name: LinkClickedNotification, source: unsortedLinksTable)
+        NAdd(sel: #selector(handleLinkClickedNotification), name: LinkClickedNotification, source: currentGroupLinksTable)
+        // NAdd(sel: #selector(handleLinkDataChangedNotification), name: LinkDataChangedNotification, source: nil)
+        NAdd(sel: #selector(handleGroupChangeNotification), name: GroupChangedNotification, source: groupPickerList)
+        NAdd(sel: #selector(handlePageChangeNotification), name: PageChangedNotification, source: pagePickerList)
         
         // Notification sent for check updates
         NotificationCenter.default.addObserver(self, selector: #selector(handleSingleLinkCheckNotification), name: NotifSiteCheckSingle, object: nil)
@@ -119,120 +121,91 @@ class ViewController: NSViewController,NSTextFieldDelegate {
     
     fileprivate let addLinkTitle = "Add a new Link..."
     fileprivate let deleteLinkTitle = "Delete this Link"
+    private let deleteMLinksTitle = "Delete selected Links"
     fileprivate let openLinkTitle = "Open Link in a browser"
     fileprivate let checkLinksTitle = "Start checking Links"
     fileprivate let filterOrderTitle = "Order and Remove Duplicates"
     
+    // shortener helper for popup menu
+    private func makeMI(_ title:String, action:Selector) -> NSMenuItem {
+        let res = NSMenuItem()
+        res.title = title
+        res.target = self
+        res.action = action
+        return res
+    }
     
     // the tables and lists have right/ctrl click popup menus
-    fileprivate func setupContextMenus() {
+    private func setupContextMenus() {
         // page picker popup menu
         pagePickerPopupMenu = NSMenu()
-        
-        let addPageMenuItem = NSMenuItem()
-        addPageMenuItem.title = newPageTag
-        addPageMenuItem.target = self
-        addPageMenuItem.action = #selector(handleMenuNewPage)
-        pagePickerPopupMenu!.addItem(addPageMenuItem)
-        
-        let renamePageMenuItem = NSMenuItem()
-        renamePageMenuItem.title = renamePageTag
-        renamePageMenuItem.target = self
-        renamePageMenuItem.action = #selector(handleMenuRenamePage)
-        pagePickerPopupMenu!.addItem(renamePageMenuItem)
-        
-        let deletePageMenuItem = NSMenuItem()
-        deletePageMenuItem.title = deletePageTag
-        deletePageMenuItem.target = self
-        deletePageMenuItem.action = #selector(handleMenuDeletePage)
-        pagePickerPopupMenu!.addItem(deletePageMenuItem)
+        // new page
+        var nmi = makeMI(newPageTag, action: #selector(handleMenuNewPage))
+        pagePickerPopupMenu!.addItem(nmi)
+        // rename page
+        nmi = makeMI(renamePageTag, action:#selector(handleMenuRenamePage))
+        pagePickerPopupMenu!.addItem(nmi)
+        // delete page
+        nmi = makeMI(deletePageTag, action: #selector(handleMenuDeletePage))
+        pagePickerPopupMenu!.addItem(nmi)
         
         pagePickerList.tableMenu = pagePickerPopupMenu
         
         // group picker popup menu
         groupPickerPopupMenu = NSMenu()
-        
-        let addGroupMenuItem = NSMenuItem()
-        addGroupMenuItem.title = newGroupTag
-        addGroupMenuItem.target = self
-        addGroupMenuItem.action = #selector(handleMenuNewGroup)
-        groupPickerPopupMenu!.addItem(addGroupMenuItem)
-        
-        let renameGroupMenuItem = NSMenuItem()
-        renameGroupMenuItem.title = renameGroupTag
-        renameGroupMenuItem.target = self
-        renameGroupMenuItem.action = #selector(handleMenuRenameGroup)
-        groupPickerPopupMenu!.addItem(renameGroupMenuItem)
-        
-        let deleteGroupMenuItem = NSMenuItem()
-        deleteGroupMenuItem.title = deleteGroupTag
-        deleteGroupMenuItem.target = self
-        deleteGroupMenuItem.action = #selector(handleMenuDeleteGroup)
-        groupPickerPopupMenu!.addItem(deleteGroupMenuItem)
+        // new group
+        nmi = makeMI(newGroupTag, action: #selector(handleMenuNewGroup))
+        groupPickerPopupMenu!.addItem(nmi)
+        // rename group
+        nmi = makeMI(renameGroupTag, action: #selector(handleMenuRenameGroup))
+        groupPickerPopupMenu!.addItem(nmi)
+        // delete group
+        nmi = makeMI(deletePageTag, action: #selector(handleMenuDeleteGroup))
+        groupPickerPopupMenu!.addItem(nmi)
         
         groupPickerList.tableMenu = groupPickerPopupMenu
         
         // unsorted links popup menu
         unsortedLinksPopupMenu = NSMenu()
-        
-        let addSiteToUnsortedMenuItem = NSMenuItem()
-        addSiteToUnsortedMenuItem.title = addLinkTitle
-        addSiteToUnsortedMenuItem.target = self
-        addSiteToUnsortedMenuItem.action = #selector(handleMenuUnsortedAddSite)
-        unsortedLinksPopupMenu!.addItem(addSiteToUnsortedMenuItem)
-        
-        let deleteSiteFromUnsortedMenuItem = NSMenuItem()
-        deleteSiteFromUnsortedMenuItem.title = deleteLinkTitle
-        deleteSiteFromUnsortedMenuItem.target = self
-        deleteSiteFromUnsortedMenuItem.action = #selector(handleMenuUnsortedDeleteSite)
-        unsortedLinksPopupMenu!.addItem(deleteSiteFromUnsortedMenuItem)
-        
-        let openSiteinBrowserMenuItem = NSMenuItem()
-        openSiteinBrowserMenuItem.title = openLinkTitle
-        openSiteinBrowserMenuItem.target = self
-        openSiteinBrowserMenuItem.action = #selector(handleMenuUnsortedOpenSite)
-        unsortedLinksPopupMenu!.addItem(openSiteinBrowserMenuItem)
-        
-        let checkUnsortedLinksMenuItem = NSMenuItem()
-        checkUnsortedLinksMenuItem.title = checkLinksTitle
-        checkUnsortedLinksMenuItem.target = self
-        checkUnsortedLinksMenuItem.action = #selector(handleMenuUnsortedCheckLinks)
-        unsortedLinksPopupMenu!.addItem(checkUnsortedLinksMenuItem)
-        
-        let filterAndOrderUnsortedLinksMenuItem = NSMenuItem()
-        filterAndOrderUnsortedLinksMenuItem.title = filterOrderTitle
-        filterAndOrderUnsortedLinksMenuItem.target = self
-        filterAndOrderUnsortedLinksMenuItem.action = #selector(handleMenuUnsortedFilerAndOrder)
-        unsortedLinksPopupMenu!.addItem(filterAndOrderUnsortedLinksMenuItem)
+        // add new link
+        nmi = makeMI(addLinkTitle, action: #selector(handleMenuUnsortedAddSite))
+        unsortedLinksPopupMenu!.addItem(nmi)
+        // delete one site
+        nmi = makeMI(deleteLinkTitle, action: #selector(handleMenuUnsortedDeleteSite))
+        unsortedLinksPopupMenu!.addItem(nmi)
+        // selete selected sites
+        nmi = makeMI(deleteMLinksTitle, action:#selector(handleMenuUnsortedDeleteMultiple) )
+        unsortedLinksPopupMenu!.addItem(nmi)
+        // open link in browser
+        nmi = makeMI(openLinkTitle, action: #selector(handleMenuUnsortedOpenSite))
+        unsortedLinksPopupMenu!.addItem(nmi)
+        // check all links
+        nmi = makeMI(checkLinksTitle, action: #selector(handleMenuUnsortedCheckLinks))
+        unsortedLinksPopupMenu!.addItem(nmi)
+        // filter for duplicates and sort by first url
+        nmi = makeMI(filterOrderTitle, action: #selector(handleMenuUnsortedFilerAndOrder))
+        unsortedLinksPopupMenu!.addItem(nmi)
         
         unsortedLinksTable.menu = unsortedLinksPopupMenu
         
         // current group links popup menu
         currentGroupLinksPopupMenu = NSMenu()
         
-        let addSiteToCurrentGroupMenuItem = NSMenuItem()
-        addSiteToCurrentGroupMenuItem.title = addLinkTitle
-        addSiteToCurrentGroupMenuItem.target = self
-        addSiteToCurrentGroupMenuItem.action = #selector(handleMenuCurrGroupAddSite)
-        currentGroupLinksPopupMenu!.addItem(addSiteToCurrentGroupMenuItem)
-        
-        let deleteSiteFromCurrentGroupMenuItem = NSMenuItem()
-        deleteSiteFromCurrentGroupMenuItem .title = deleteLinkTitle
-        deleteSiteFromCurrentGroupMenuItem .target = self
-        deleteSiteFromCurrentGroupMenuItem .action = #selector(handleMenuCurrGroupDeleteSite)
-        currentGroupLinksPopupMenu!.addItem(deleteSiteFromCurrentGroupMenuItem )
-        
-        let openSiteinBrowserMenuItem2 = NSMenuItem()
-        openSiteinBrowserMenuItem2.title = openLinkTitle
-        openSiteinBrowserMenuItem2.target = self
-        openSiteinBrowserMenuItem2.action = #selector(handleMenuCurrentGroupOpenSite)
-        currentGroupLinksPopupMenu!.addItem(openSiteinBrowserMenuItem2)
-        
-        let checkCurrentGroupMenuItem = NSMenuItem()
-        checkCurrentGroupMenuItem.title = checkLinksTitle
-        checkCurrentGroupMenuItem.target = self
-        checkCurrentGroupMenuItem.action = #selector(handleMenuCurrentGroupCheckLinks)
-        currentGroupLinksPopupMenu!.addItem(checkCurrentGroupMenuItem)
+        // add new link
+        nmi = makeMI(addLinkTitle, action: #selector(handleMenuCurrGroupAddSite))
+        currentGroupLinksPopupMenu!.addItem(nmi)
+        // delete link in group
+        nmi = makeMI(deleteLinkTitle, action: #selector(handleMenuCurrGroupDeleteSite))
+        currentGroupLinksPopupMenu!.addItem(nmi)
+        // delete selected sites
+        nmi = makeMI(deleteMLinksTitle, action: #selector(handleMenuGroupLinksDeleteMultiple))
+        currentGroupLinksPopupMenu!.addItem(nmi)
+        // open in browser
+        nmi = makeMI(openLinkTitle, action: #selector(handleMenuCurrentGroupOpenSite))
+        currentGroupLinksPopupMenu!.addItem(nmi)
+        // check links in group
+        nmi = makeMI(checkLinksTitle, action: #selector(handleMenuCurrentGroupCheckLinks))
+        currentGroupLinksPopupMenu!.addItem(nmi)
         
         currentGroupLinksTable.menu = currentGroupLinksPopupMenu
    
@@ -432,6 +405,9 @@ class ViewController: NSViewController,NSTextFieldDelegate {
         // deleting...
         unsortedLinksTable!.deleteRowInTable(UInt(clickedRow))
     }
+    @objc func handleMenuUnsortedDeleteMultiple(_ sender:AnyObject?) {
+        unsortedLinksTable!.deleteSelectedRows()
+    }
     
     // unsorted links list: open site in browser (using the first url) {
     @objc func handleMenuUnsortedOpenSite(_ sender:AnyObject?) {
@@ -475,7 +451,7 @@ class ViewController: NSViewController,NSTextFieldDelegate {
     
     @objc func handleMenuCurrentGroupCheckLinks(_ sender:AnyObject?) {
         let currGroup = groupLinksDelegate!.currentGroupLink!
-        _ = appPtr.groupChecker.setGroupToCheck(group: currGroup)
+        _ = appPtr.groupChecker.setGroupToCheck(group: currGroup,source: docPointer!.document_data)
         startProgress(message: "Checking links in \(currGroup.groupName)")
         _ = appPtr.groupChecker.startChecks()
     }
@@ -507,7 +483,9 @@ class ViewController: NSViewController,NSTextFieldDelegate {
         // deleting...
         _ = currentGroupLinksTable!.deleteRowInTable(UInt(clickedRow))
     }
-    
+    @objc func handleMenuGroupLinksDeleteMultiple(_ sender:AnyObject?) {
+        currentGroupLinksTable.deleteSelectedRows()
+    }
     //--------------------------------------------
     // validator
     override func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
@@ -533,29 +511,49 @@ class ViewController: NSViewController,NSTextFieldDelegate {
             return (clickedRow >= 0)
         }
         // unsorted links validation
-        if menuItem == unsortedLinksPopupMenu!.item(withTitle: deleteLinkTitle) {
+        if menuItem === unsortedLinksPopupMenu!.item(withTitle: deleteLinkTitle) {
             let clickedRow = unsortedLinksTable!.clickedRow
             return (clickedRow >= 0)
         }
-        if menuItem == unsortedLinksPopupMenu!.item(withTitle: checkLinksTitle) {
+        if menuItem === unsortedLinksPopupMenu!.item(withTitle: deleteMLinksTitle) {
+            return unsortedLinksTable.selectedIndexes.count > 0
+        }
+        if menuItem === unsortedLinksPopupMenu!.item(withTitle: checkLinksTitle) {
             if docPointer == nil { return false }
             let unscount = docPointer!.document_data.unsortedLinkCount
             return (appPtr.groupChecker.notActive && (unscount > 0))
         }
-        if menuItem == unsortedLinksPopupMenu!.item(withTitle: filterOrderTitle) {
+        if menuItem === unsortedLinksPopupMenu!.item(withTitle: filterOrderTitle) {
             if docPointer == nil { return false }
             if usort_active { return false }
             let unscount = docPointer!.document_data.unsortedLinkCount
             return (appPtr.groupChecker.notActive && (unscount > 1))
         }
+        if menuItem === unsortedLinksPopupMenu!.item(withTitle: openLinkTitle) {
+            if docPointer == nil { return false }
+            let clickedRow = unsortedLinksTable!.clickedRow
+            return (clickedRow >= 0)
+        }
         // current group validation
-        if menuItem == currentGroupLinksPopupMenu!.item(withTitle: deleteLinkTitle) {
+        if menuItem === currentGroupLinksPopupMenu!.item(withTitle: deleteLinkTitle) {
             let clickedRow = currentGroupLinksTable!.clickedRow
             return (clickedRow >= 0)
         }
-        if menuItem == currentGroupLinksPopupMenu!.item(withTitle: checkLinksTitle) {
+        if menuItem === currentGroupLinksPopupMenu!.item(withTitle: deleteMLinksTitle) {
+            return currentGroupLinksTable.selectedIndexes.count > 0
+        }
+        if menuItem === currentGroupLinksPopupMenu!.item(withTitle: checkLinksTitle) {
             guard let glink = groupLinksDelegate?.currentGroupLink else { return false }
             return (appPtr.groupChecker.notActive && (glink.count > 0))
+        }
+        if menuItem === currentGroupLinksPopupMenu!.item(withTitle: openLinkTitle) {
+            if docPointer == nil { return false }
+            let clickedRow = currentGroupLinksTable!.clickedRow
+            return (clickedRow >= 0)
+        }
+        if menuItem === currentGroupLinksPopupMenu!.item(withTitle: addLinkTitle) {
+            if docPointer == nil { return false }
+            return groupLinksDelegate?.currentGroupLink != nil
         }
         return true
     }
@@ -565,6 +563,8 @@ class ViewController: NSViewController,NSTextFieldDelegate {
     // +++ [ Notification Handlers ] ++++++++++++++++++++++++++++++
     
     @objc func handleLinkClickedNotification(_ notification: Notification) {
+        guard let nsource = notification.object as? GB_LinkTableView else { return }
+        if (nsource !== self.currentGroupLinksTable) && (nsource !== self.unsortedLinksTable) { return }
         if (siteEditorPointer != nil) {
             let notifyData = notification.userInfo as! [String:AnyObject]
             siteEditorPointer!.changeSiteUsingData(notifyData)
@@ -599,6 +599,9 @@ class ViewController: NSViewController,NSTextFieldDelegate {
     
     
     @objc func handleLinkDataChangedNotification(_ notification:Notification) {
+        // checking the source
+        guard let source = notification.object as? LinkEditViewController else { return }
+        if (siteEditorPointer !== source) { return }
         // unpacking data
         let notifData = notification.userInfo as! [String:AnyObject]
         let fromUnsorted = notifData[unsortedKey] as! Bool
@@ -640,25 +643,37 @@ class ViewController: NSViewController,NSTextFieldDelegate {
     @objc func handleSingleLinkCheckNotification(_ notification:Notification) {
         // extracting the link data, we exit if there is an error or no changes happened
         let linkData = notification.userInfo as! [String:Any]
+        // checking that the message is for this collection
+        guard let collection = linkData[SourceCollectionKey] as? GB_LinkCollection else { return }
+        if (collection !== docPointer?.document_data) { return }
+        // ignore if no change in the link status
         guard let changeCount = linkData[ChangeCountKey] as? Int else { return }
         if changeCount < 1 { return }
-        guard let objectChanged = linkData[LinkObjectKey] as? GB_SiteLink else { return }
         // we try and locate the link object in the currently displayed groups
+        guard let objectChanged = linkData[LinkObjectKey] as? GB_SiteLink else { return }
         _ = checkUpdateLink(objectChanged)
     }
     
     @objc func handleALinkCheckNotification(_ notification:Notification) {
         // extracting the link data, we exit if there is an error or no changes happened
         let linkData = notification.userInfo as! [String:Any]
+        // checking that the message is for this collection
+        guard let collection = linkData[SourceCollectionKey] as? GB_LinkCollection else { return }
+        if (collection !== docPointer?.document_data) { return }
+        // ignore if no change in the link status
         guard let changeCount = linkData[ChangeCountKey] as? Int else { return }
         if changeCount < 1 { return }
-        guard let objectChanged = linkData[LinkObjectKey] as? GB_SiteLink else { return }
         // we try and locate the link object in the currently displayed groups
+        guard let objectChanged = linkData[LinkObjectKey] as? GB_SiteLink else { return }
         _ = checkUpdateLink(objectChanged)
     }
     
     @objc func handleLinkListCheckingDone(_ notification:Notification) {
         let linkData = notification.userInfo as! [String:Any]
+        // checking that the message is for this collection
+        guard let collection = linkData[SourceCollectionKey] as? GB_LinkCollection else { return }
+        if (collection !== docPointer?.document_data) { return }
+        // displaying the completed gui changes
         guard let gname = linkData["listName"] as? String else { return }
         DispatchQueue.main.async {
             self.stopProgress(message: "Link check done for \(gname)")
@@ -743,6 +758,9 @@ class ViewController: NSViewController,NSTextFieldDelegate {
             setupNotificationObservers()
             collectionIntoDelegates(docPointer!.document_data)
             pagePickerList.loadPickZero(true)
+            if siteEditorPointer != nil {
+                siteEditorPointer!.setLinkCollection(docPointer!.document_data)
+            }
         }
         pagePickerList!.sizeColumn()
         groupPickerList!.sizeColumn()
@@ -766,6 +784,12 @@ class ViewController: NSViewController,NSTextFieldDelegate {
     override func prepare(for segue: NSStoryboardSegue, sender: Any?) {
         if segue.identifier == siteEditorID {
             siteEditorPointer = segue.destinationController as? LinkEditViewController
+            if (siteEditorPointer != nil) {
+                if docPointer != nil {
+                    siteEditorPointer?.setLinkCollection(docPointer!.document_data)
+                }
+                NAdd(sel: #selector(handleLinkDataChangedNotification), name: LinkDataChangedNotification, source: siteEditorPointer!)
+            }
         }
     }
     

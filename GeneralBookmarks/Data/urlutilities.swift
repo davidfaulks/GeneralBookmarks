@@ -16,6 +16,7 @@ let NotifSiteChecksDone = Notification.Name("NotifMultiSiteCheckDone")
 // keys for notifications
 let ChangeCountKey = "ChangeCount"
 let LinkObjectKey = "LinkObject"
+let SourceCollectionKey = "LinkCollectionPtr"
 
 //====================================================================================
 // class which wraps the complexities of checking GB_SiteLink. HTTP/HTTPS Only!
@@ -24,6 +25,7 @@ class GB_CheckSiteLink {
     private let config = URLSessionConfiguration.ephemeral
     private let session:URLSession
     private(set) weak var linkObjectPointer:GB_SiteLink? = nil
+    private(set) weak var linkCollectionPointer:GB_LinkCollection? = nil
     // fetch/access data
     private var URLs:[URL?] = []
     private var tasks:[URLSessionDataTask?] = []
@@ -53,7 +55,7 @@ class GB_CheckSiteLink {
         return (checkC == URLs.count)
     }
     private func qPrint(_ msg:String) {
-        NSLog("Check \(linkObjectPointer!.getLinkLabelAtIndex(0)) : \(msg)")
+        print("Check \(linkObjectPointer!.getLinkLabelAtIndex(0)) : \(msg)")
     }
     //-----------------------------------------------------------------
     
@@ -82,8 +84,9 @@ class GB_CheckSiteLink {
     }
     // --------------------------------------------------
     // the function that sets up the checks, given a link object
-    func willCheckLinkObject(_ linkObject:GB_SiteLink) -> Bool {
+    func willCheckLinkObject(_ linkObject:GB_SiteLink, sourcePointer:GB_LinkCollection) -> Bool {
         self.linkObjectPointer = linkObject
+        self.linkCollectionPointer = sourcePointer
         // turning the string urls to URL objects, and marking them as valid (.Unchecked) or invalid (.Invalid)
         var tempURL:URL? = nil
         for linkIndex in 0..<linkObjectPointer!.linkCount {
@@ -142,15 +145,17 @@ class GB_CheckSiteLink {
     }
     // --------------------------------------------------
     // one-method wrapper that does all you need
-    func doFullCheck(linkObject:GB_SiteLink) {
+    func doFullCheck(linkObject:GB_SiteLink, source:GB_LinkCollection) {
         link_status_copy = linkObject.startCheckGetStatuses()
-        let validx = self.willCheckLinkObject(linkObject)
+        let validx = self.willCheckLinkObject(linkObject,sourcePointer: source)
         if validx { self.check() }
         else {
             linkObjectPointer!.checking = false
             // preparing the notification info
             if notifyOnEmpty {
-                let notifyData:[String:Any] = [ChangeCountKey:0,LinkObjectKey:linkObjectPointer!]
+                let notifyData:[String:Any] = [ChangeCountKey:0,
+                                               LinkObjectKey:linkObjectPointer!,
+                                               SourceCollectionKey:linkCollectionPointer!]
                 let notifName = forMultiple ? NotifSiteCheckMultiple : NotifSiteCheckSingle
                 NotificationCenter.default.post(name: notifName, object: self, userInfo: notifyData)
             }
@@ -166,7 +171,9 @@ class GB_CheckSiteLink {
         let changed = (statusChanged > 0)
         if notifyOnEmpty || changed {
             // preparing the notification info
-            let notifyData:[String:Any] = [ChangeCountKey:statusChanged,LinkObjectKey:linkObjectPointer!]
+            let notifyData:[String:Any] = [ChangeCountKey:statusChanged,
+                                           LinkObjectKey:linkObjectPointer!,
+                                           SourceCollectionKey:linkCollectionPointer!]
             let notifName = forMultiple ? NotifSiteCheckMultiple : NotifSiteCheckSingle
             // sending the notification
 
@@ -228,7 +235,7 @@ class GB_SingleLinkChecker {
     private var startdex:Int = 0
     private var checkmap:[Int:GB_CheckSiteLink] = [:]
     
-    func launchCheck(urldata:GB_SiteLink) {
+    func launchCheck(urldata:GB_SiteLink, sourcePtr:GB_LinkCollection) {
         let checkObj = GB_CheckSiteLink(notifyIfEmpty: true, multiple: false)
         let startcopy = startdex
         checkObj.specialCallback = { (_ checker:GB_CheckSiteLink ) in
@@ -236,7 +243,7 @@ class GB_SingleLinkChecker {
         }
         checkmap[startdex] = checkObj
         startdex += 1
-        checkObj.doFullCheck(linkObject: urldata)
+        checkObj.doFullCheck(linkObject: urldata, source: sourcePtr)
     }
     
 }
@@ -247,6 +254,7 @@ class GB_GroupLinkChecker {
     private var checkers:[GB_CheckSiteLink] = []
     // the list of links to process
     private(set) var linklist:[GB_SiteLink] = []
+    private(set) var sourcePointer:GB_LinkCollection? = nil
     private(set) var linksStarted = 0
     private(set) var linksDone = 0
     private(set) var listName:String = ""
@@ -272,11 +280,12 @@ class GB_GroupLinkChecker {
     }
     
     // setting a list of links to check (cannot be done while a previous check is in progress
-    public func setListToCheck(links:[GB_SiteLink], name:String) -> Bool {
+    public func setListToCheck(links:[GB_SiteLink], name:String, source:GB_LinkCollection) -> Bool {
         mutex.lock()
         defer { mutex.unlock() }
         if (linksStarted > 0) && (!allDone) { return false }
         linklist = links
+        sourcePointer = source
         linksStarted = 0
         linksDone = 0
         allDone = false
@@ -285,18 +294,18 @@ class GB_GroupLinkChecker {
     }
     
     // conveneince method that sets the list from a group
-    public func setGroupToCheck(group:GB_LinkGroup) -> Bool {
+    public func setGroupToCheck(group:GB_LinkGroup, source:GB_LinkCollection) -> Bool {
         if group.count == 0 { return false }
         var listCopy:[GB_SiteLink] = []
         for dex in 0..<group.count { listCopy.append(group.linkAtIndex(dex)!) }
-        return setListToCheck(links: listCopy, name: group.groupName)
+        return setListToCheck(links: listCopy, name: group.groupName, source: source)
     }
     // for unsorted links, since the array is internal to the link collection object
     public func setUnsortedToCheck(collection:GB_LinkCollection) -> Bool {
         if collection.unsortedLinkCount == 0 { return false }
         var listCopy:[GB_SiteLink] = []
         for dex in 0..<collection.unsortedLinkCount { listCopy.append(collection.linkAtIndex(dex)) }
-        return setListToCheck(links: listCopy, name: "Unsorted Links")
+        return setListToCheck(links: listCopy, name: "Unsorted Links", source: collection)
     }
     
     // start checking using the already set list
@@ -308,7 +317,7 @@ class GB_GroupLinkChecker {
         // launch the checks
         let lauchAmount = min(linklist.count,checkers.count)
         for lindex in 0..<lauchAmount {
-            checkers[lindex].doFullCheck(linkObject: linklist[lindex])
+            checkers[lindex].doFullCheck(linkObject: linklist[lindex], source: sourcePointer!)
             linksStarted += 1
         }
         return true
@@ -327,12 +336,12 @@ class GB_GroupLinkChecker {
         // if there are unstarted links, setup the checker with a new link to do
         if (linksStarted != linklist.count) {
             linksStarted += 1
-            checkers[index].doFullCheck(linkObject: linklist[linksStarted-1])
+            checkers[index].doFullCheck(linkObject: linklist[linksStarted-1], source:sourcePointer!)
         }
         // here, we are done
         else if (linksDone == linklist.count ){
             allDone = true
-            let odata = ["listName":listName]
+            let odata:[String:Any] = ["listName":listName,SourceCollectionKey:self.sourcePointer!]
             NotificationCenter.default.post(name: NotifSiteChecksDone, object: self, userInfo: odata)
         }
     }
