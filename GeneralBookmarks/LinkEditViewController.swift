@@ -269,37 +269,70 @@ class LinkEditViewController: NSViewController,NSTableViewDelegate, NSTableViewD
     fileprivate var linkTablePopupMenu:NSMenu? = nil
     fileprivate let addLinkTag = "Add a Link to the Site..."
     fileprivate let deleteLinkTag = "Delete this Link"
+    private let insertLinkTag = "Insert a Link here..."
+    private let openBrowserTag = "Open in Browser..."
+    
+    // shortener helper for popup menu
+    private func makeMI(_ title:String, action:Selector) -> NSMenuItem {
+        let res = NSMenuItem()
+        res.title = title
+        res.target = self
+        res.action = action
+        return res
+    }
     
     // creating the menu and attaching it to the tablelinkTablePopupMenu
     fileprivate func setupPopupMenu() {
         // page picker popup menu
         linkTablePopupMenu = NSMenu()
         
-        let addLinkMenuItem = NSMenuItem()
-        addLinkMenuItem.title = addLinkTag
-        addLinkMenuItem.target = self
-        addLinkMenuItem.action = #selector(handleAddLinkToSite)
-        linkTablePopupMenu!.addItem(addLinkMenuItem)
+        var nmi = makeMI(addLinkTag, action: #selector(handleAddLinkToSite))
+        linkTablePopupMenu!.addItem(nmi)
         
-        let deleteLinkMenuItem = NSMenuItem()
-        deleteLinkMenuItem.title = deleteLinkTag
-        deleteLinkMenuItem.target = self
-        deleteLinkMenuItem.action = #selector(handleDeleteLinkFromSite)
-        linkTablePopupMenu!.addItem(deleteLinkMenuItem)
+        nmi = makeMI(insertLinkTag, action: #selector(handleInsertLinkInSite))
+        linkTablePopupMenu!.addItem(nmi)
+        
+        nmi = makeMI(deleteLinkTag, action: #selector(handleDeleteLinkFromSite))
+        linkTablePopupMenu!.addItem(nmi)
+        
+        nmi = makeMI(openBrowserTag, action: #selector(handleOpenBrowser))
+        linkTablePopupMenu!.addItem(nmi)
         
         linksDisplayTable.menu = linkTablePopupMenu
     }
-    // appending a new link for the site
-    @objc func handleAddLinkToSite(_ sender:AnyObject?) {
-        let result = showModalTextEntry("Additional Link", info: "Enter a non-empty label for the new link.",
+    //----------------------------------------------------------------------
+    public func openInBrowser(row:Int) -> Bool {
+        if (row < 0) { return false }
+        guard let urlString = displayedSite?.getUrlAtIndex(row) else { return false }
+        guard let clickedURL = URL(string: urlString) else { return false }
+        NSWorkspace.shared.open(clickedURL)
+        return true;
+    }
+    // helper for adding/inserting links
+    private func addInsertLink(index:Int) {
+        let result = showModalTextEntry("Additional Link",
+                                        info: "Enter a non-empty label for the new link.",
                                         defaultText: "(new Link)", nonEmpty: true)
         if result != nil {
             // making up a fake url
             let fakeUrl = "http://www.zog.qx/"
-            displayedSite!.appendUrlAndLabel(url: fakeUrl, label: result!)
-            reloadLink()
+            if (index < 0) {
+                _ = displayedSite!.appendUrlAndLabel(url: fakeUrl, label: result!)
+            }
+            else {
+                _ = displayedSite!.insertLinkAtIndex(index, url: fakeUrl, label: result!)
+            }
+            _ = reloadLink()
         }
-        
+    }
+    // appending a new link for the site
+    @objc func handleAddLinkToSite(_ sender:AnyObject?) {
+        addInsertLink(index: -1)
+    }
+    // insering a link
+    @objc func handleInsertLinkInSite(_ sender:AnyObject?) {
+        let clickedRow = linksDisplayTable!.clickedRow
+        addInsertLink(index: clickedRow)
     }
     // deleting a link from the site
     @objc func handleDeleteLinkFromSite(_ sender:AnyObject?) {
@@ -307,8 +340,15 @@ class LinkEditViewController: NSViewController,NSTableViewDelegate, NSTableViewD
         if clickedRow >= 0 {
             displayedSite!.deleteLinkAtIndex(clickedRow)
             sendLinkDataChangedNotification()
+            _ = reloadLink()
         }
     }
+    @objc func handleOpenBrowser(_ sender:AnyObject?) {
+        let clickedRow = linksDisplayTable!.clickedRow
+        if (clickedRow < 0) { return }
+        openInBrowser(row: clickedRow)
+    }
+    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // validating the menu items
     override func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
         if menuItem === linkTablePopupMenu!.item(withTitle: deleteLinkTag) {
@@ -328,7 +368,7 @@ class LinkEditViewController: NSViewController,NSTableViewDelegate, NSTableViewD
     }
     
     @IBAction func checkButtonAction(_ sender: Any) {
-        checker.launchCheck(urldata: displayedSite!, sourcePtr: displayedList!)
+        checker.launchCheck(urldata: displayedSite!, sourcePtr: displayedList!, autoHTTPS: true)
         setCheckingWidgets(isChecking: true)
     }
     

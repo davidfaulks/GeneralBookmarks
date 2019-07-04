@@ -173,18 +173,20 @@ class ViewController: NSViewController,NSTextFieldDelegate {
         // delete one site
         nmi = makeMI(deleteLinkTitle, action: #selector(handleMenuUnsortedDeleteSite))
         unsortedLinksPopupMenu!.addItem(nmi)
-        // selete selected sites
+        // delete selected sites
         nmi = makeMI(deleteMLinksTitle, action:#selector(handleMenuUnsortedDeleteMultiple) )
         unsortedLinksPopupMenu!.addItem(nmi)
+        // filter for duplicates and sort by first url
+        nmi = makeMI(filterOrderTitle, action: #selector(handleMenuUnsortedFilerAndOrder))
+        unsortedLinksPopupMenu!.addItem(nmi)
+        unsortedLinksPopupMenu!.addItem(NSMenuItem.separator())
         // open link in browser
         nmi = makeMI(openLinkTitle, action: #selector(handleMenuUnsortedOpenSite))
         unsortedLinksPopupMenu!.addItem(nmi)
         // check all links
         nmi = makeMI(checkLinksTitle, action: #selector(handleMenuUnsortedCheckLinks))
         unsortedLinksPopupMenu!.addItem(nmi)
-        // filter for duplicates and sort by first url
-        nmi = makeMI(filterOrderTitle, action: #selector(handleMenuUnsortedFilerAndOrder))
-        unsortedLinksPopupMenu!.addItem(nmi)
+        
         
         unsortedLinksTable.menu = unsortedLinksPopupMenu
         
@@ -200,6 +202,7 @@ class ViewController: NSViewController,NSTextFieldDelegate {
         // delete selected sites
         nmi = makeMI(deleteMLinksTitle, action: #selector(handleMenuGroupLinksDeleteMultiple))
         currentGroupLinksPopupMenu!.addItem(nmi)
+        unsortedLinksPopupMenu!.addItem(NSMenuItem.separator())
         // open in browser
         nmi = makeMI(openLinkTitle, action: #selector(handleMenuCurrentGroupOpenSite))
         currentGroupLinksPopupMenu!.addItem(nmi)

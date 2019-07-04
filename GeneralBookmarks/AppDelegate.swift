@@ -12,7 +12,7 @@ import Cocoa
 class AppDelegate: NSObject, NSApplicationDelegate {
 
     var linkChecker:GB_SingleLinkChecker = GB_SingleLinkChecker()
-    var groupChecker:GB_GroupLinkChecker = GB_GroupLinkChecker(checkerCount: 3)
+    var groupChecker:GB_GroupLinkChecker = GB_GroupLinkChecker(checkerCount: 3, autoHTTPS: true)
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application

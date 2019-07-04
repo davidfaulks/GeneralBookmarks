@@ -163,6 +163,7 @@ class GB_SiteLink : NSObject,NSCoding {
         priv_checking = true
         return linkStatuses
     }
+    //--------------------------------------------------------
     func replaceStatusesEndCheck(newStatuses:[GB_LinkStatus]) -> Bool {
         mutex.lock()
         defer { mutex.unlock() }
@@ -175,6 +176,14 @@ class GB_SiteLink : NSObject,NSCoding {
         linkStatuses = newStatuses
         priv_checking = false
         return true
+    }
+    // we use this to change an http link to an https one
+    func updateHTTPS(index:Int) {
+        mutex.lock()
+        defer { mutex.unlock() }
+        assertInRange(index)
+        let insertx = linkURLs[index].index(linkURLs[index].startIndex, offsetBy: 4)
+        linkURLs[index].insert("s", at: insertx)
     }
     
     
@@ -235,6 +244,16 @@ class GB_SiteLink : NSObject,NSCoding {
         linkURLs.append(inurl)
         linkLabels.append(inlabel)
         linkStatuses.append(.Unchecked)
+        return true
+    }
+    // insert a new URL with label at the specified index
+    func insertLinkAtIndex(_ index:Int, url inurl:String, label:String) -> Bool {
+        if inurl.isEmpty { return false }
+        if label.isEmpty { return false }
+        if (index < -1) || (index >= linkURLs.count) { return false }
+        linkURLs.insert(inurl, at: index)
+        linkLabels.insert(label, at: index)
+        linkStatuses.insert(.Unchecked, at: index)
         return true
     }
     

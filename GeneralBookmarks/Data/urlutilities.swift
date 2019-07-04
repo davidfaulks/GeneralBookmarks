@@ -20,10 +20,10 @@ let SourceCollectionKey = "LinkCollectionPtr"
 
 //====================================================================================
 // class which wraps the complexities of checking GB_SiteLink. HTTP/HTTPS Only!
-class GB_CheckSiteLink {
+class GB_CheckSiteLink : NSObject, URLSessionDelegate, URLSessionTaskDelegate {
     // basic config
     private let config = URLSessionConfiguration.ephemeral
-    private let session:URLSession
+    private var session:URLSession!
     private(set) weak var linkObjectPointer:GB_SiteLink? = nil
     private(set) weak var linkCollectionPointer:GB_LinkCollection? = nil
     // fetch/access data
@@ -31,9 +31,11 @@ class GB_CheckSiteLink {
     private var tasks:[URLSessionDataTask?] = []
     private var results:[GB_LinkStatus] = []
     private var link_status_copy:[GB_LinkStatus] = []
+    private var httpsUpdated:[Bool] = []
     // when done, what do we do?
     let notifyOnEmpty:Bool
     let forMultiple:Bool
+    let autoHTTPS:Bool
     var specialCallback:((_ checker:GB_CheckSiteLink)->Void)? = nil
     private(set) var alldone = false
     
@@ -60,10 +62,12 @@ class GB_CheckSiteLink {
     //-----------------------------------------------------------------
     
     // inits and deinits
-    init(notifyIfEmpty:Bool, multiple:Bool) {
+    init(notifyIfEmpty:Bool, multiple:Bool, autoHTTPS HTTPSy:Bool) {
         self.notifyOnEmpty = notifyIfEmpty
         self.forMultiple = multiple
-        session = URLSession(configuration:config)
+        self.autoHTTPS = HTTPSy
+        super.init()
+        session = URLSession(configuration: config, delegate: self, delegateQueue: nil)
     }
     deinit {
         session.invalidateAndCancel()
@@ -72,6 +76,7 @@ class GB_CheckSiteLink {
     // private function to create a data task for the given index (make sure the index and its URL are valid first)
     private func makeTask(forIndex:Int) {
         // I will *not* check validity...
+
         let newTask = session.dataTask(with: URLs[forIndex]!, completionHandler: { (discard:Data?, response:URLResponse?, errval:Error?) in
             self.handleResponse(forIndex: forIndex, inResponse: response, inErr: errval)
             // finally, once done...
@@ -109,6 +114,7 @@ class GB_CheckSiteLink {
                 checkCount += 1
             }
             else { tasks.append(nil) }
+            httpsUpdated.append(false)
         }
         // afterwards, we might have nothing to check...
         return (checkCount > 0)
@@ -189,10 +195,39 @@ class GB_CheckSiteLink {
     }
     
     //----------------------------------------------------------------
+    // delegate method for redirects
+    func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
+        if autoHTTPS {
+            if let newTarget = request.url {
+                checkforHTTPS(task: task, newTarget: newTarget)
+            }
+        }
+        completionHandler(nil) // prevents auto-following a redirection
+    }
+    /* partly handles 'autoHTTPS', which basically means if the redirected target is
+    identical except for being https instead of http, we update the URL and mark it as
+    Okay. */
+    private func checkforHTTPS(task:URLSessionTask, newTarget:URL) {
+        if newTarget.scheme?.lowercased() != "https" { return }
+        // looking for the index using the task object
+        guard let lindex = tasks.firstIndex(where:{$0 === task}) else { return }
+        // checking for equality...
+        if URLs[lindex]?.scheme == nil { return }
+        if URLs[lindex]!.scheme!.lowercased() != "http" { return }
+        let newurl = newTarget.absoluteString
+        var oldurl = URLs[lindex]!.absoluteString
+        let insertx = oldurl.index(oldurl.startIndex, offsetBy: 4)
+        oldurl.insert("s", at: insertx)
+        if (oldurl == newurl) {
+            httpsUpdated[lindex] = true
+        }
+    }
+    //----------------------------------------------------------------
     // a function that handles the response from an url header
     private func handleResponse(forIndex:Int,inResponse:URLResponse?,inErr:Error?) {
         if let response = inResponse as? HTTPURLResponse,inErr == nil {
             let responseCode = response.statusCode
+            // print("HTTP response \(responseCode)")
             switch responseCode {
                 case 200...299,307,418: results[forIndex] = .Okay
                 case 400,404,410,523,530: results[forIndex] = .Missing
@@ -209,6 +244,11 @@ class GB_CheckSiteLink {
         // record status changes...
         if results[forIndex] != linkObjectPointer!.getStatusAtIndex(forIndex) {
             statusChanged += 1
+        }
+        if (results[forIndex] == .Redirected) && httpsUpdated[forIndex] {
+            results[forIndex] = .Okay
+            statusChanged += 1
+            linkObjectPointer!.updateHTTPS(index: forIndex)
         }
     }
     //---------------------------------------------------------
@@ -235,8 +275,8 @@ class GB_SingleLinkChecker {
     private var startdex:Int = 0
     private var checkmap:[Int:GB_CheckSiteLink] = [:]
     
-    func launchCheck(urldata:GB_SiteLink, sourcePtr:GB_LinkCollection) {
-        let checkObj = GB_CheckSiteLink(notifyIfEmpty: true, multiple: false)
+    func launchCheck(urldata:GB_SiteLink, sourcePtr:GB_LinkCollection, autoHTTPS:Bool) {
+        let checkObj = GB_CheckSiteLink(notifyIfEmpty: true, multiple: false, autoHTTPS: autoHTTPS)
         let startcopy = startdex
         checkObj.specialCallback = { (_ checker:GB_CheckSiteLink ) in
             self.checkmap[startcopy] = nil
@@ -267,10 +307,10 @@ class GB_GroupLinkChecker {
     }
     
     // init with a specified number of checkers
-    init(checkerCount:Int) {
+    init(checkerCount:Int, autoHTTPS:Bool) {
         let acount = (checkerCount < 1) ? 1 : checkerCount
         for dex in 0..<acount {
-            checkers.append(GB_CheckSiteLink(notifyIfEmpty: false,multiple: true))
+            checkers.append(GB_CheckSiteLink(notifyIfEmpty: false,multiple: true, autoHTTPS: autoHTTPS))
             checkers[dex].specialCallback = { (_ checker:GB_CheckSiteLink ) in
                 DispatchQueue.global(qos: .utility).async {
                     self.checkDone(checker: checker)
