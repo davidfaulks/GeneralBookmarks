@@ -237,7 +237,7 @@ class GB_CheckSiteLink : NSObject, URLSessionDelegate, URLSessionTaskDelegate {
                 default: results[forIndex] = .Failed
             }
         }
-        // did not get any response: faliure!
+        // did not get any response: failure!
         else {
             results[forIndex] = .Failed
         }
@@ -260,6 +260,7 @@ class GB_CheckSiteLink : NSObject, URLSessionDelegate, URLSessionTaskDelegate {
         URLs = []
         tasks = []
         results = []
+        httpsUpdated = []
         link_status_copy = []
         alldone = false
         checkC = 0
