@@ -213,7 +213,7 @@ class GBListBox : NSView, NSTableViewDataSource, NSTableViewDelegate {
         reloadData(false)
         noSignal1 = true
         table!.selectRowIndexes(IndexSet(integer:row), byExtendingSelection: false)
-        table!.display() // NOTE : This line seems to cause problems with newer Xcode
+        table!.display() // NOTE : This line might cause problems with newer Xcode
         noSignal1 = false
     }
     
@@ -364,6 +364,7 @@ class GBListBox : NSView, NSTableViewDataSource, NSTableViewDelegate {
                 if (okay) {
                     let newRow =  (dataIndexes.first! < row) ? (row-1) : row
                     intReloadAndSelect(newRow)
+                    sendSelectionChange(newRow)
                 }
                 return okay
             }
@@ -371,8 +372,7 @@ class GBListBox : NSView, NSTableViewDataSource, NSTableViewDelegate {
         // external drag in
         else if ( dragSource !== table) && externalDragDrop {
             if let dragData = getDragDataFromPasteboard(pasteboard) {
-                let dropResult = delegate?.handleExternalDrop?(dragSource! as AnyObject, typePaste: dragData.0,
-                                                               sourceIndexes: dragData.1, toRow: row)
+                let dropResult = delegate?.handleExternalDrop?(dragSource! as AnyObject, typePaste: dragData.0, sourceIndexes: dragData.1, toRow: row)
                 // please note that handleExternalDrop should also handle any reloading and selecting
                 return dropResult ?? false
             }

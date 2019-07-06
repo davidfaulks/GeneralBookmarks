@@ -273,8 +273,8 @@ class ViewController: NSViewController,NSTextFieldDelegate {
     @objc func handleMenuRenamePage(_ sender:AnyObject?) {
         let clickedRow = pagePickerList.clickedRow
         if clickedRow >= 0 {
-            let result = showModalTextEntry("Rename Page", info: "Enter a new, non-empty name for the page.",
-                                            defaultText: "(new Page \(clickedRow))", nonEmpty: true)
+            let oname = pageListDelegate!.getStringAtIndex(clickedRow)!
+            let result = showModalTextEntry("Rename Page", info: "Enter a new, non-empty name for the page.",defaultText: oname, nonEmpty: true)
             if result != nil {
                 docPointer!.document_data.listOfPages[clickedRow].pageName = result!
                 _ = pagePickerList.reloadRow(clickedRow)
@@ -287,8 +287,7 @@ class ViewController: NSViewController,NSTextFieldDelegate {
         if clickedRow >= 0 {
             let clickedPagePtr = docPointer!.document_data.listOfPages[clickedRow]
             // getting confirmation
-            let result = showDeleteDialog(false, itemName: clickedPagePtr.pageName,
-                                          activeLinkCount: clickedPagePtr.countNonDepreciatedLinks(), totalLinkCount: clickedPagePtr.countLinks)
+            let result = showDeleteDialog(false, itemName: clickedPagePtr.pageName, activeLinkCount: clickedPagePtr.countNonDepreciatedLinks(), totalLinkCount: clickedPagePtr.countLinks)
             if result != nil {
                 // we are going ahead...
                 // need to pick the index to select afterwards
@@ -342,8 +341,10 @@ class ViewController: NSViewController,NSTextFieldDelegate {
     @objc func handleMenuRenameGroup(_ sender:AnyObject?) {
         let clickedRow = groupPickerList.clickedRow
         if clickedRow >= 0 {
-            let result = showModalTextEntry("Rename Group", info: "Enter a new, non-empty name for the group.",
-                                            defaultText: "(new Group \(clickedRow))", nonEmpty: true)
+            let oname = groupListDelegate!.groupAtIndex(UInt(clickedRow))!.groupName
+            let result = showModalTextEntry("Rename Group",
+                            info: "Enter a new, non-empty name for the group.",
+                            defaultText: oname, nonEmpty: true)
             if result != nil {
                 _ = groupListDelegate!.renameGroup(UInt(clickedRow), toName: result!)
                 _ = groupPickerList.reloadRow(clickedRow)
