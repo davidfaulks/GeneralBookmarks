@@ -58,7 +58,7 @@ class GBTemplateOutputter: NSObject,NSCoding {
         do {
             try stringOutput.write(to: fileURL, atomically: true, encoding: String.Encoding.utf8)
         }
-        catch let error as Error {
+        catch let error {
             return error
         }
         return nil

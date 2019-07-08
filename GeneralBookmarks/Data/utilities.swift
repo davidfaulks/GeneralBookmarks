@@ -80,7 +80,7 @@ class GB_StringExtractor {
         // looking for the end String
         if let endRange = getRangeFromCurrent(endString) {
             let subStringRange = currentIndex..<endRange.lowerBound
-            let resultString = stringBase.substring(with: subStringRange)
+            let resultString = String(stringBase[subStringRange])
             // setting the new index
             oldIndex = currentIndex
             currentIndex = endRange.upperBound
@@ -98,7 +98,7 @@ class GB_StringExtractor {
             if let endRange = stringBase.range(of: endDelimiter, options: compOption, range: startRange.upperBound..<stringBase.endIndex, locale: defaultLocale) {
                 // extracting the substring
                 let subStringRange = startRange.upperBound..<endRange.lowerBound
-                let resultString = stringBase.substring(with: subStringRange)
+                let resultString = String(stringBase[subStringRange])
                 // returning the result
                 return (resultString,endRange.upperBound)
             }
@@ -163,7 +163,7 @@ class GBStringUtils {
     // extracts a trimmed substring using an NSRange
     static func getSubString(from:String, using:NSRange) -> String? {
         guard let swrange = Range(using, in:from) else { return nil }
-        let resultString = from.substring(with: swrange)
+        let resultString = String(from[swrange])
         return resultString.trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
@@ -286,7 +286,7 @@ func extractLinksFromHTML(_ inputHTML:String) ->[GB_SiteLink] {
 func loadFileToString(_ filepath:String) -> (Bool, String) {
     let filemgr = FileManager.default
     if filemgr.fileExists(atPath: filepath) {
-        loadHTMLFileToString(filepath)
+        _ = loadHTMLFileToString(filepath)
         do {
             let readFile = try String(contentsOfFile: filepath, encoding: String.Encoding.utf8)
             return (true,readFile)

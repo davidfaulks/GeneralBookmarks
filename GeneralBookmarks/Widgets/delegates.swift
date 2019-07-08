@@ -163,7 +163,7 @@ class GB_LinkTableDelegate: NSObject, NSTableViewDelegate, NSTableViewDataSource
     
     // (optional delegate) drop
     func tableView(_ tableView: NSTableView, acceptDrop info: NSDraggingInfo, row: Int, dropOperation: NSTableView.DropOperation) -> Bool {
-        let fname = "tableView Accept Drop "
+        // let fname = "tableView Accept Drop "
         // initial data which might be nil or bad
         guard let dragSource = info.draggingSource() as! NSTableView? else { return false }
         guard let sourceIndexes = getIndexesFromInfo(info) else { return false }

@@ -121,7 +121,7 @@ class GB_GroupOutputter : GB_OutputBase {
         if addLineSeparator { linkList += "\n" }
         // we stick it in overall
         var intermediateResult = overall.replacingOccurrences(of: "&#2#", with: linkList)
-        var replacement = escapedHTMLfromText(source.groupName, encodequotes: true)
+        let replacement = escapedHTMLfromText(source.groupName, encodequotes: true)
         intermediateResult = intermediateResult.replacingOccurrences(of: "&#1#", with: replacement)
         // finishing off
         return intermediateResult.replacingOccurrences(of: "&#0#", with: source.fragmentID)
@@ -226,7 +226,7 @@ class GB_GroupListOutputter : GB_OutputBase {
             // getting the group, and converting and adding the link data
             let currentGroup = source.groups[groupIndex]
             let temp = group_link.replacingOccurrences(of: "&#0#", with: currentGroup.fragmentID)
-            var replacement = escapedHTMLfromText(currentGroup.groupName, encodequotes: true)
+            let replacement = escapedHTMLfromText(currentGroup.groupName, encodequotes: true)
             groupList +=  temp.replacingOccurrences(of: "&#1#", with: replacement)
             // adding the separator
             if groupIndex < (groupCount-1) { groupList += separator }

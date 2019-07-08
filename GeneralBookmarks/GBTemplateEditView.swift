@@ -44,7 +44,7 @@ class GBTemplateEditView: NSTabViewController {
         // loading page tab view stuff
         pageTabView.pageNameEdit.stringValue = template.templateName
         pageTabView.loadPageOutputter(source: template.pageOutputter)
-        pageTabView.pageNavEditPanel.loadPageNav(source: template.pageNav)
+        _ = pageTabView.pageNavEditPanel.loadPageNav(source: template.pageNav)
         // for the parts, there is a convenience function to call the 6 lesser loaders
         partsTabView.loadFromPageOutputter(source: template.pageOutputter)
         // done
@@ -56,9 +56,9 @@ class GBTemplateEditView: NSTabViewController {
         // saving page tab view stuff
         template.templateName = pageTabView.pageNameEdit.stringValue
         pageTabView.savePageOutputter(target: template.pageOutputter)
-        pageTabView.pageNavEditPanel.savePageNav(target: template.pageNav)
+        _ = pageTabView.pageNavEditPanel.savePageNav(target: template.pageNav)
         // saving the parts (using a special function
-        partsTabView.saveToPageEditor(target: template.pageOutputter)
+        _ = partsTabView.saveToPageEditor(target: template.pageOutputter)
         // done
         return true
     }

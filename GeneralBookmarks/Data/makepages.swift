@@ -37,7 +37,7 @@ class GB_PageNavOutputter : GB_OutputBase {
     func makeOutput(forPageName:String) -> String {
         // getting some important values
         let pageCount = pageNames.count
-        let currentIndex = pageNames.index(of: forPageName) as? Int
+        let currentIndex = pageNames.index(of: forPageName)
         let doingLast = (currentIndex == (pageCount - 1))
         var outputString = ""
         var tempLink = ""

@@ -110,22 +110,18 @@ class OutputView: NSViewController,GBListBoxDelegate {
         bulkEnabled(false)
         outputProgressBar.doubleValue = 0.0
         progressDetailLabel.stringValue = "Starting..."
-        print("OutputCollectionAction A")
         // more document prep
-        useDoc.saveActiveDocument() // might do nothing if the template has no window
-        print("OutputCollectionAction B")
+        _ = useDoc.saveActiveDocument() // might do nothing if the template has no window
         outputterPtr = useDoc.document_data
         // preparing for the output...
         let pageCount = outputPtr!.listOfPages.count
-        print("OutputCollectionAction C \(pageCount)")
         outputProgressBar.maxValue = Double(pageCount+1)
         let ores = outputterPtr!.setupOutput(collection: outputPtr!, targetDirectory: outputDirectory)
-        print("OutputCollectionAction D \(ores)")
         assert(ores)
         // making the page done block
         pageDoneBlock = { (okay:Bool,error:Error?) in
             DispatchQueue.main.async {
-                if okay { self.pageOutputDone() }
+                if okay { _ = self.pageOutputDone() }
                 else {
                     self.progressDetailLabel.stringValue += " Failed! \(error?.localizedDescription)"
                     self.bulkEnabled(true)

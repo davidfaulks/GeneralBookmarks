@@ -159,7 +159,7 @@ class GB_CheckSiteLink : NSObject, URLSessionDelegate, URLSessionTaskDelegate {
     func doFullCheck(linkObject:GB_SiteLink, source:GB_LinkCollection) {
         link_status_copy = linkObject.startCheckGetStatuses()
         let validx = self.willCheckLinkObject(linkObject,sourcePointer: source)
-        if validx { self.check() }
+        if validx { _ = self.check() }
         else {
             linkObjectPointer!.checking = false
             // preparing the notification info
@@ -226,6 +226,13 @@ class GB_CheckSiteLink : NSObject, URLSessionDelegate, URLSessionTaskDelegate {
                 if actual! == oldString { redirectCheck[lindex] = .same }
             }
         }
+        else if newString.hasPrefix(paradox_trick) && newString.hasSuffix(paradox_trick2) {
+            let shorter = newString.dropFirst(paradox_trick.count).dropLast(paradox_trick2.count)
+            let actual = shorter.removingPercentEncoding
+            if actual != nil {
+                if actual! == oldString { redirectCheck[lindex] = .same }
+            }
+        }
         // checking for http → https
         else {
             if newTarget.scheme?.lowercased() != "https" { return }
@@ -238,6 +245,8 @@ class GB_CheckSiteLink : NSObject, URLSessionDelegate, URLSessionTaskDelegate {
         }
     }
     let medium_trick = "https://medium.com/m/global-identity?redirectUrl="
+    let paradox_trick = "https://login.paradoxplaza.com/login?service="
+    let paradox_trick2 = "&gateway=true"
     //----------------------------------------------------------------
     // a function that handles the response from an url header
     private func handleResponse(forIndex:Int,inResponse:URLResponse?,inErr:Error?) {

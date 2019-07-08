@@ -38,7 +38,7 @@ class GB_TemplateEditPage: NSViewController {
     }
     private func pageTemplateIsComplete() -> Bool {
         
-        let testString = pageTemplateEdit.string ?? ""
+        let testString = pageTemplateEdit.string
         // the fixed substitutions
         if !(testString.contains("&#1#") && testString.contains("&#2#")) { return false }
         if !testString.contains("&#3#") { return false }
@@ -61,10 +61,10 @@ class GB_TemplateEditPage: NSViewController {
     //=======================================================
     func loadPageOutputter(source:GB_PageOutputter) {
         pageTemplateEdit.string = source.overall
-        groupSplitEditPanel.loadDataFromOutputter(source)
+        _ = groupSplitEditPanel.loadDataFromOutputter(source)
     }
     func savePageOutputter(target:GB_PageOutputter) {
-        target.overall = pageTemplateEdit.string ?? ""
+        target.overall = pageTemplateEdit.string
         groupSplitEditPanel.saveDataToPageOutputter(target)
     }
     

@@ -49,6 +49,17 @@ class GB_LabelUrlTableCellView : NSTableCellView, NSTextFieldDelegate {
         row = row_info
     }
     
+    private var savedCaret:NSRange? = nil
+    
+    func saveURLCaret() {
+        savedCaret = linkURLEdit.currentEditor()?.selectedRange
+    }
+    func restoreURLCaret() {
+        if (savedCaret == nil) { return }
+        linkURLEdit.becomeFirstResponder()
+        linkURLEdit.currentEditor()?.selectedRange = savedCaret!
+    }
+    
 }
 //==========================================================================================
 // the view controller, embedded in the main view, it is used to view and edit link details
@@ -162,7 +173,10 @@ class LinkEditViewController: NSViewController,NSTableViewDelegate, NSTableViewD
         else {
             changeDone = displayedSite!.setUrlAtIndex(linkRow, inurl: newText)
             if changeDone {
+                // reloading cell in column 0 causes text field in column 1 to loose focus, workaround
+                cellFrom.saveURLCaret()
                 linksDisplayTable.reloadData(forRowIndexes: IndexSet(integer:linkRow), columnIndexes: IndexSet(integer:0))
+                cellFrom.restoreURLCaret()
             }
         }
         // in some cases, we also need to send a notification, so...
@@ -346,7 +360,7 @@ class LinkEditViewController: NSViewController,NSTableViewDelegate, NSTableViewD
     @objc func handleOpenBrowser(_ sender:AnyObject?) {
         let clickedRow = linksDisplayTable!.clickedRow
         if (clickedRow < 0) { return }
-        openInBrowser(row: clickedRow)
+        _ = openInBrowser(row: clickedRow)
     }
     //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // validating the menu items
@@ -380,13 +394,18 @@ class LinkEditViewController: NSViewController,NSTableViewDelegate, NSTableViewD
         setCheckingWidgets(isChecking: checking)
         return true
     }
+    func reloadCheckDone() {
+        let checking = displayedSite!.checking
+        linksDisplayTable.reloadData()
+        setCheckingWidgets(isChecking: checking)
+    }
     
     // handler for the notification that a single link check is done...
     @objc func handleLinkCheckSingleNotification(_ notification: Notification) {
         let data = notification.userInfo as! [String:Any]
         guard let objectChecked = data[LinkObjectKey] as? GB_SiteLink else { return }
         if objectChecked === displayedSite {
-            DispatchQueue.main.async { self.reloadLink() }
+            DispatchQueue.main.async { _ = self.reloadLink() }
         }
     }
     

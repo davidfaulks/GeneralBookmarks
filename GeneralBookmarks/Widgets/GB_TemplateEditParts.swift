@@ -98,7 +98,7 @@ class GB_TemplateEditParts: NSViewController, NSTextDelegate {
     func saveMajorLinkNav(target:GB_MajorLinksOutputter) -> Bool {
         target.major_link = majorLinkNavLinkTemplate.stringValue
         target.separator = majorLinkSeparatorEdit.stringValue
-        target.overall = majorLinkNavOverallEdit.string ?? ""
+        target.overall = majorLinkNavOverallEdit.string
         return majorLinkNavLinkIsComplete()
     }
     //-------------------------------------------------------
@@ -245,7 +245,7 @@ class GB_TemplateEditParts: NSViewController, NSTextDelegate {
         
         if majorLinkNavIsComplete() {
             if target.bigLinksFormatter == nil { target.bigLinksFormatter = GB_MajorLinksOutputter() }
-            saveMajorLinkNav(target: target.bigLinksFormatter!)
+            _ = saveMajorLinkNav(target: target.bigLinksFormatter!)
         }
         else {
             if target.bigLinksFormatter != nil { target.bigLinksFormatter = nil }

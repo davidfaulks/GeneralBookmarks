@@ -407,15 +407,15 @@ class ViewController: NSViewController,NSTextFieldDelegate {
         let clickedRow = unsortedLinksTable.clickedRow
         if (clickedRow<0) { return }
         // deleting...
-        unsortedLinksTable!.deleteRowInTable(UInt(clickedRow))
+        _ = unsortedLinksTable!.deleteRowInTable(UInt(clickedRow))
     }
     @objc func handleMenuUnsortedDeleteMultiple(_ sender:AnyObject?) {
-        unsortedLinksTable!.deleteSelectedRows()
+        _ = unsortedLinksTable!.deleteSelectedRows()
     }
     
     // unsorted links list: open site in browser (using the first url) {
     @objc func handleMenuUnsortedOpenSite(_ sender:AnyObject?) {
-        unsortedLinksTable.launchClickedRowInBrowser()
+        _ = unsortedLinksTable.launchClickedRowInBrowser()
     }
     
     // unsorted links list: start checking all of the links
@@ -441,7 +441,7 @@ class ViewController: NSViewController,NSTextFieldDelegate {
                 self.unsortedLinksTable.isEnabled = true
                 self.usort_active = false
                 self.stopProgress(message:"Unsorted Links have been Filtered and Ordered." )
-                self.unsortedLinksTable.reloadAndSetIndex(0)
+                _ = self.unsortedLinksTable.reloadAndSetIndex(0)
             }
         }
         
@@ -488,7 +488,7 @@ class ViewController: NSViewController,NSTextFieldDelegate {
         _ = currentGroupLinksTable!.deleteRowInTable(UInt(clickedRow))
     }
     @objc func handleMenuGroupLinksDeleteMultiple(_ sender:AnyObject?) {
-        currentGroupLinksTable.deleteSelectedRows()
+        _ = currentGroupLinksTable.deleteSelectedRows()
     }
     //--------------------------------------------
     // validator
@@ -571,7 +571,7 @@ class ViewController: NSViewController,NSTextFieldDelegate {
         if (nsource !== self.currentGroupLinksTable) && (nsource !== self.unsortedLinksTable) { return }
         if (siteEditorPointer != nil) {
             let notifyData = notification.userInfo as! [String:AnyObject]
-            siteEditorPointer!.changeSiteUsingData(notifyData)
+            _ = siteEditorPointer!.changeSiteUsingData(notifyData)
             let fromUnsorted = notifyData[unsortedKey] as! Bool
             if (fromUnsorted) { unsortedLinksTable!.reloadAfterAppend() }
             else { currentGroupLinksTable!.reloadAfterAppend() }
@@ -581,14 +581,14 @@ class ViewController: NSViewController,NSTextFieldDelegate {
     @objc func handleGroupChangeNotification(_ notification: Notification) {
         let changeIndexes = notification.userInfo as! [String:Int]
         let toIndex = changeIndexes["to row"]
-        groupLinksDelegate!.changeGroup(UInt(toIndex!))
+        _ = groupLinksDelegate!.changeGroup(UInt(toIndex!))
     }
     
     @objc func handlePageChangeNotification(_ notification: Notification) {
         let changeIndexes = notification.userInfo as! [String:Int]
         let toIndex = changeIndexes["to row"]!
-        groupListDelegate!.changePage(UInt(toIndex))
-        groupLinksDelegate!.changePage(UInt(toIndex))
+        _ = groupListDelegate!.changePage(UInt(toIndex))
+        _ = groupLinksDelegate!.changePage(UInt(toIndex))
         let pagelist = docPointer!.document_data.listOfPages
         if (pagelist.count == 0) { return }
         let currentPage = pagelist[toIndex]
@@ -629,6 +629,9 @@ class ViewController: NSViewController,NSTextFieldDelegate {
             // let checko = docPointer!.document_data.linkAtIndex(unsortedIndex).getLinkLabelAtIndex(0)
             DispatchQueue.main.async {
                 let qres = self.unsortedLinksTable!.reloadRow(UInt(unsortedIndex))
+                if self.unsortedLinksTable!.rowIsDisplayedLink(unsortedIndex) {
+                    self.siteEditorPointer?.reloadCheckDone()
+                }
             }
             return true
         }
@@ -637,6 +640,9 @@ class ViewController: NSViewController,NSTextFieldDelegate {
         if currentIndex >= 0 {
             DispatchQueue.main.async {
                 _ = self.currentGroupLinksTable!.reloadRow(UInt(currentIndex))
+                if self.currentGroupLinksTable!.rowIsDisplayedLink(currentIndex) {
+                    self.siteEditorPointer?.reloadCheckDone()
+                }
             }
             return true
         }
@@ -746,7 +752,7 @@ class ViewController: NSViewController,NSTextFieldDelegate {
     // the standard view did load delegate
     override func viewDidLoad() {
         super.viewDidLoad()
-        appPtr = NSApplication.shared.delegate as! AppDelegate
+        appPtr = (NSApplication.shared.delegate as! AppDelegate)
         // Do any additional setup after loading the view.
         setupTablesAndLists()
         linkEntryAccessoryView = loadLinkEntryAccesory()
@@ -761,9 +767,9 @@ class ViewController: NSViewController,NSTextFieldDelegate {
             docPointer = GetDocument()
             setupNotificationObservers()
             collectionIntoDelegates(docPointer!.document_data)
-            pagePickerList.loadPickZero(true)
+            _ = pagePickerList.loadPickZero(true)
             if siteEditorPointer != nil {
-                siteEditorPointer!.setLinkCollection(docPointer!.document_data)
+                _ = siteEditorPointer!.setLinkCollection(docPointer!.document_data)
             }
         }
         pagePickerList!.sizeColumn()
@@ -779,7 +785,7 @@ class ViewController: NSViewController,NSTextFieldDelegate {
         while (viewResult == nil) {
             Bundle.main.loadNibNamed(NSNib.Name(rawValue: accessoryViewID), owner: nil,topLevelObjects:&objects )
             viewResult = objects?.object(at: 0) as? GB_LinkEntryView
-            NSLog("loadLinkEntryAccesory")
+            print("loadLinkEntryAccesory")
         }
         return viewResult!
     }
@@ -790,7 +796,7 @@ class ViewController: NSViewController,NSTextFieldDelegate {
             siteEditorPointer = segue.destinationController as? LinkEditViewController
             if (siteEditorPointer != nil) {
                 if docPointer != nil {
-                    siteEditorPointer?.setLinkCollection(docPointer!.document_data)
+                    _ = siteEditorPointer?.setLinkCollection(docPointer!.document_data)
                 }
                 NAdd(sel: #selector(handleLinkDataChangedNotification), name: LinkDataChangedNotification, source: siteEditorPointer!)
             }
