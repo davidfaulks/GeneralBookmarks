@@ -18,11 +18,6 @@ let ChangeCountKey = "ChangeCount"
 let LinkObjectKey = "LinkObject"
 let SourceCollectionKey = "LinkCollectionPtr"
 
-// redirection check options
-enum RCheckOp {
-    case none; case same; case https
-}
-
 //====================================================================================
 // class which wraps the complexities of checking GB_SiteLink. HTTP/HTTPS Only!
 class GB_CheckSiteLink : NSObject, URLSessionDelegate, URLSessionTaskDelegate {
@@ -36,7 +31,7 @@ class GB_CheckSiteLink : NSObject, URLSessionDelegate, URLSessionTaskDelegate {
     private var tasks:[URLSessionDataTask?] = []
     private var results:[GB_LinkStatus] = []
     private var link_status_copy:[GB_LinkStatus] = []
-    private var redirectCheck:[RCheckOp] = []
+    private var redirectURLs:[String?] = []
     // when done, what do we do?
     let notifyOnEmpty:Bool
     let forMultiple:Bool
@@ -119,7 +114,7 @@ class GB_CheckSiteLink : NSObject, URLSessionDelegate, URLSessionTaskDelegate {
                 checkCount += 1
             }
             else { tasks.append(nil) }
-            redirectCheck.append(.none)
+            redirectURLs.append(nil)
         }
         // afterwards, we might have nothing to check...
         return (checkCount > 0)
@@ -202,51 +197,18 @@ class GB_CheckSiteLink : NSObject, URLSessionDelegate, URLSessionTaskDelegate {
     //----------------------------------------------------------------
     // delegate method for redirects
     func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
-        if autoHTTPS {
-            if let newTarget = request.url {
-                checkRedirect(task: task, newTarget: newTarget)
-            }
+        guard let lindex = tasks.firstIndex(where:{$0 === task}) else {
+            completionHandler(nil)
+            return
         }
-        completionHandler(nil) // prevents auto-following a redirection
+        guard let newURL = request.url?.absoluteString else {
+            completionHandler(nil)
+            return
+        }
+        print("redirection found: \(newURL)")
+        redirectURLs[lindex] = newURL
+        completionHandler(request)
     }
-    
-    /* Redirect can be tricky, sometimes it is merely http → https, sometimes we
-       get redirected to the same page (directly or indirectly) */
-    private func checkRedirect(task:URLSessionTask, newTarget:URL) {
-        let newString = newTarget.absoluteString
-        print("redirected: \(newString)")
-        guard let lindex = tasks.firstIndex(where:{$0 === task}) else { return }
-        // checking for equality
-        var oldString = URLs[lindex]!.absoluteString
-        if (oldString == newString) { redirectCheck[lindex] = .same }
-        // checking for medium trickery
-        else if newString.hasPrefix(medium_trick) {
-            let actual = newString.dropFirst(medium_trick.count).removingPercentEncoding
-            if actual != nil {
-                if actual! == oldString { redirectCheck[lindex] = .same }
-            }
-        }
-        else if newString.hasPrefix(paradox_trick) && newString.hasSuffix(paradox_trick2) {
-            let shorter = newString.dropFirst(paradox_trick.count).dropLast(paradox_trick2.count)
-            let actual = shorter.removingPercentEncoding
-            if actual != nil {
-                if actual! == oldString { redirectCheck[lindex] = .same }
-            }
-        }
-        // checking for http → https
-        else {
-            if newTarget.scheme?.lowercased() != "https" { return }
-            // checking for equality...
-            if URLs[lindex]?.scheme == nil { return }
-            if URLs[lindex]!.scheme!.lowercased() != "http" { return }
-            let insertx = oldString.index(oldString.startIndex, offsetBy: 4)
-            oldString.insert("s", at: insertx)
-            if (oldString == newString) { redirectCheck[lindex] = .https }
-        }
-    }
-    let medium_trick = "https://medium.com/m/global-identity?redirectUrl="
-    let paradox_trick = "https://login.paradoxplaza.com/login?service="
-    let paradox_trick2 = "&gateway=true"
     //----------------------------------------------------------------
     // a function that handles the response from an url header
     private func handleResponse(forIndex:Int,inResponse:URLResponse?,inErr:Error?) {
@@ -266,19 +228,59 @@ class GB_CheckSiteLink : NSObject, URLSessionDelegate, URLSessionTaskDelegate {
         else {
             results[forIndex] = .Failed
         }
-        if (results[forIndex] == .Redirected) && (redirectCheck[forIndex] == .same) {
-            results[forIndex] = .Okay
+        // +++ checking afterwars for redirection...
+        var checkred = false
+        if results[forIndex] == .Okay {
+            checkred = redirectCheck(forIndex: forIndex)
         }
-        // record status changes...
-        if (results[forIndex] == .Redirected) && (redirectCheck[forIndex] == .https) {
-            results[forIndex] = .Okay
-            statusChanged += 1
-            linkObjectPointer!.updateHTTPS(index: forIndex)
-        }
-        else if results[forIndex] != linkObjectPointer!.getStatusAtIndex(forIndex) {
+        let differ = (results[forIndex] != linkObjectPointer!.getStatusAtIndex(forIndex))
+        if differ || checkred {
             statusChanged += 1
         }
-        
+    }
+    // after getting the response code, we check for redirects...
+    private func redirectCheck(forIndex index:Int) -> Bool {
+        if (redirectURLs[index] == nil) { return false }
+        let old_url = URLs[index]!.absoluteString
+        // redirect back to same url
+        if (old_url == redirectURLs[index]!) { return false }
+        let newURL = redirectURLs[index]!
+        // check http → https
+        guard let oldScheme = URLs[index]?.scheme else { return true }
+        if (oldScheme.lowercased() == "http") {
+            let sdex = newURL.index(newURL.startIndex, offsetBy: 5)
+            let newStart = String(newURL[..<sdex]).lowercased()
+            if newStart == "https" {
+                // checking for equality...
+                let insertx = old_url.index(old_url.startIndex, offsetBy: 4)
+                let surl = "https" + old_url[insertx...]
+                if (surl == newURL) {
+                    print("https update")
+                    linkObjectPointer!.updateHTTPS(index: index)
+                    return true;
+                }
+            }
+        }
+        // checking for the annoying traling slash redirects...
+        let udiff = old_url.count - newURL.count
+        if udiff == 1 {
+            if old_url.last! == Character("/") {
+                if (old_url.dropLast() == newURL) { return false } // effectivly the same url
+            }
+        }
+        else if (udiff == -1) {
+            if newURL.last! == Character("/") {
+                if (newURL.dropLast() == old_url) { return false }
+            }
+        }
+        // checking for the '?gi=' tacked on the end of medium.com hosted stuff
+        if let gidex = newURL.range(of: "?gi=") {
+            let bef = String(newURL[..<gidex.lowerBound])
+            if (bef == old_url) { return false }
+        }
+        // if we get here, treat as a real redirection
+        results[index] = .Redirected
+        return true
     }
     //---------------------------------------------------------
     // in order to be able to use the object, we can reset and clear some things
@@ -287,7 +289,7 @@ class GB_CheckSiteLink : NSObject, URLSessionDelegate, URLSessionTaskDelegate {
         mutex.lock()
         defer { mutex.unlock() }
         URLs = [];      tasks = []
-        results = [];   redirectCheck = []
+        results = [];   redirectURLs = []
         link_status_copy = []
         alldone = false
         checkC = 0;     statusChanged = 0
