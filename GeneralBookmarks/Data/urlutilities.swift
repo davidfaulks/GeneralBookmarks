@@ -12,6 +12,7 @@ import Foundation
 let NotifSiteCheckSingle = Notification.Name("NotifOneSiteChecked")
 let NotifSiteCheckMultiple = Notification.Name("NotifASiteChecked")
 let NotifSiteChecksDone = Notification.Name("NotifMultiSiteCheckDone")
+let NotifSiteCheckStarted = Notification.Name("NotifASiteStarted")
 
 // keys for notifications
 let ChangeCountKey = "ChangeCount"
@@ -76,8 +77,10 @@ class GB_CheckSiteLink : NSObject, URLSessionDelegate, URLSessionTaskDelegate {
     // private function to create a data task for the given index (make sure the index and its URL are valid first)
     private func makeTask(forIndex:Int) {
         // I will *not* check validity...
+        var req = URLRequest(url: URLs[forIndex]!)
+        // req.httpMethod = "HEAD" // breaks some sites
 
-        let newTask = session.dataTask(with: URLs[forIndex]!, completionHandler: { (discard:Data?, response:URLResponse?, errval:Error?) in
+        let newTask = session.dataTask(with: req, completionHandler: { (discard:Data?, response:URLResponse?, errval:Error?) in
             self.handleResponse(forIndex: forIndex, inResponse: response, inErr: errval)
             // finally, once done...
             if self.incrementAndCheckIfDone() {
@@ -154,6 +157,7 @@ class GB_CheckSiteLink : NSObject, URLSessionDelegate, URLSessionTaskDelegate {
     func doFullCheck(linkObject:GB_SiteLink, source:GB_LinkCollection) {
         link_status_copy = linkObject.startCheckGetStatuses()
         let validx = self.willCheckLinkObject(linkObject,sourcePointer: source)
+        postCheckStart()
         if validx { _ = self.check() }
         else {
             linkObjectPointer!.checking = false
@@ -168,6 +172,12 @@ class GB_CheckSiteLink : NSObject, URLSessionDelegate, URLSessionTaskDelegate {
             alldone = true
             specialCallback?(self)
         }
+    }
+    private func postCheckStart() {
+        let notifyData:[String:Any] = [LinkObjectKey:linkObjectPointer!,
+                                       SourceCollectionKey:linkCollectionPointer!]
+        NotificationCenter.default.post(name: NotifSiteCheckStarted,
+                                        object: self, userInfo: notifyData)
     }
     
     //-----------------------------------------------

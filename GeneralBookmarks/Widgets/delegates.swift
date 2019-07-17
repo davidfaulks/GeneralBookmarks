@@ -26,6 +26,7 @@ func makeLinkDisplayNotification(_ sourceIndex:Int, _ fromUnsorted:Bool, _ linkP
 
 let LinkClickedNotification = NSNotification.Name(rawValue: "LinkClickedNotification")
 //*********************************************************************************
+let MaroonCol = NSColor.init(red: 0.784, green: 0.220, blue: 0.353, alpha: 1.0)
 // pasteboard type, needed for row-reordering and drag and drop
 let GBSiteLinkPBoardType = NSPasteboard.PasteboardType(rawValue:"GBSiteLinkPBoardType")
 /*
@@ -97,8 +98,12 @@ class GB_LinkTableDelegate: NSObject, NSTableViewDelegate, NSTableViewDataSource
         // column 2 is the link status
         else if columnIndex == 2 {
             if linkItem.isEmpty { outputCell.stringValue = "??" }
+            else if linkItem.checking {
+                outputCell.textColor = MaroonCol
+                outputCell.stringValue = "...Checking"
+            }
             else {
-                let mainStatus = linkItem.getStatusAtIndex(0)
+                let mainStatus = linkItem.status
                 outputCell.textColor = getColourForStatus(mainStatus)
                 outputCell.stringValue = mainStatus.rawValue
                 

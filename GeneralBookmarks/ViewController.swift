@@ -108,6 +108,7 @@ class ViewController: NSViewController,NSTextFieldDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(handleSingleLinkCheckNotification), name: NotifSiteCheckSingle, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleALinkCheckNotification), name: NotifSiteCheckMultiple, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleLinkListCheckingDone), name: NotifSiteChecksDone, object: nil)
+        NAdd(sel: #selector(handleALinkStarted), name: NotifSiteCheckStarted, source: nil)
         
     }
     
@@ -659,6 +660,17 @@ class ViewController: NSViewController,NSTextFieldDelegate {
         // ignore if no change in the link status
         guard let changeCount = linkData[ChangeCountKey] as? Int else { return }
         if changeCount < 1 { return }
+        // we try and locate the link object in the currently displayed groups
+        guard let objectChanged = linkData[LinkObjectKey] as? GB_SiteLink else { return }
+        _ = checkUpdateLink(objectChanged)
+    }
+    
+    @objc func handleALinkStarted(_ notification:Notification) {
+        // extracting the link data, we exit if there is an error or no changes happened
+        let linkData = notification.userInfo as! [String:Any]
+        // checking that the message is for this collection
+        guard let collection = linkData[SourceCollectionKey] as? GB_LinkCollection else { return }
+        if (collection !== docPointer?.document_data) { return }
         // we try and locate the link object in the currently displayed groups
         guard let objectChanged = linkData[LinkObjectKey] as? GB_SiteLink else { return }
         _ = checkUpdateLink(objectChanged)

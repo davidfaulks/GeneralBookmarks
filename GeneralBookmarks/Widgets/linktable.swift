@@ -355,9 +355,8 @@ class GB_LinkTableView : NSTableView {
         let ʒrow = IndexSet(integer:Int(rowIndex))
         let columnCount = numberOfColumns
         // skipping column 1 for now
-        for ϻ in 1..<columnCount {
-            reloadData(forRowIndexes: ʒrow, columnIndexes: IndexSet(integer:ϻ))
-        }
+        let columnDex = IndexSet(integersIn: 1..<columnCount)
+        reloadData(forRowIndexes: ʒrow, columnIndexes: columnDex)
         return true
     }
     

@@ -4,7 +4,7 @@
 //  Core classes and stuff for link data
 //  Created by David Faulks on 2016-02-19.
 //  Copyright © 2016-2019 dfaulks. All rights reserved.
-//  Last updated May 18, 2016
+//  Last July 17, 2019
 
 import Foundation
 import AppKit
@@ -18,6 +18,7 @@ enum GB_LinkStatus:String {
     case Failed
     case Redirected
     case Forbidden
+    case Mixed
 }
 
 // we will associate a colour for each LinkStatus
@@ -32,6 +33,7 @@ func getColourForStatus(_ inStatus:GB_LinkStatus) -> NSColor {
         case .Failed    : return NSColor.black
         case .Redirected: return NSColor.blue
         case .Forbidden : return NSColor.black
+        case .Mixed     : return NSColor.brown
     }
 }
 
@@ -43,10 +45,14 @@ class GB_SiteLink : NSObject,NSCoding {
     fileprivate var linkURLs:[String] = []              // URLS
     fileprivate var linkLabels:[String] = []            // associated labels
     fileprivate var linkStatuses:[GB_LinkStatus] = []   // associated Status
+    
+    private(set) var status:GB_LinkStatus = .Invalid;
     var important:Bool = false                      // important link
     var depreciated:Bool = false;                   // hide the link (but keep it just in case)
+    
     private var priv_checking:Bool = false
     private let mutex:NSLock = NSLock()
+    
     var checking:Bool {
         get {
             mutex.lock()
@@ -114,6 +120,23 @@ class GB_SiteLink : NSObject,NSCoding {
         important = aDecoder.decodeBool(forKey: importantKey)
         depreciated = aDecoder.decodeBool(forKey: depreciatedKey)
         assert(linkURLs.count == linkStatuses.count,"Number of links and numer of statuses do not match!")
+        setMainStatus()
+    }
+    
+    // the main status, based on the individual url statuses
+    // .Invalid if there are none, .Mixed if they differ
+    private func setMainStatus() {
+        if (linkStatuses.count == 0) {
+            status = .Invalid
+            return
+        }
+        for sdex in 0..<linkStatuses.count {
+            if (sdex == 0) { status = linkStatuses[sdex] }
+            else if (status != linkStatuses[sdex]) {
+                status = .Mixed
+                break
+            }
+        }
     }
     
     
@@ -167,13 +190,9 @@ class GB_SiteLink : NSObject,NSCoding {
     func replaceStatusesEndCheck(newStatuses:[GB_LinkStatus]) -> Bool {
         mutex.lock()
         defer { mutex.unlock() }
-
-        if linkStatuses.count != newStatuses.count {
-            print("replaceStatuses A: \(linkStatuses.count)")
-            print("replaceStatuses B: \(newStatuses.count)")
-            return false
-        }
+        assert(linkStatuses.count == newStatuses.count, "LinkStatus counts do not match!")
         linkStatuses = newStatuses
+        setMainStatus()
         priv_checking = false
         return true
     }
@@ -200,6 +219,7 @@ class GB_SiteLink : NSObject,NSCoding {
             linkStatuses[index] = .Unchecked
         }
         linkLabels[index] = inlabel
+        setMainStatus()
         return true
     }
     
@@ -211,6 +231,7 @@ class GB_SiteLink : NSObject,NSCoding {
         if linkURLs[index] != inurl {
             linkURLs[index] = inurl
             linkStatuses[index] = .Unchecked
+            setMainStatus()
             return true
         }
         else { return false }
@@ -232,6 +253,7 @@ class GB_SiteLink : NSObject,NSCoding {
     func setStatusAtIndex(_ index:Int, status instatus:GB_LinkStatus) {
         assertInRange(index)
         linkStatuses[index] = instatus
+        setMainStatus()
     }
     
     
@@ -244,6 +266,7 @@ class GB_SiteLink : NSObject,NSCoding {
         linkURLs.append(inurl)
         linkLabels.append(inlabel)
         linkStatuses.append(.Unchecked)
+        setMainStatus()
         return true
     }
     // insert a new URL with label at the specified index
@@ -254,6 +277,7 @@ class GB_SiteLink : NSObject,NSCoding {
         linkURLs.insert(inurl, at: index)
         linkLabels.insert(label, at: index)
         linkStatuses.insert(.Unchecked, at: index)
+        setMainStatus()
         return true
     }
     
@@ -263,6 +287,7 @@ class GB_SiteLink : NSObject,NSCoding {
         linkURLs.remove(at: index)
         linkLabels.remove(at: index)
         linkStatuses.remove(at: index)
+        setMainStatus()
     }
     
     // moves a link in the array
