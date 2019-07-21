@@ -376,7 +376,8 @@ class GB_GroupLinkChecker {
     public func setGroupToCheck(group:GB_LinkGroup, source:GB_LinkCollection) -> Bool {
         if group.count == 0 { return false }
         var listCopy:[GB_SiteLink] = []
-        for dex in 0..<group.count { listCopy.append(group.linkAtIndex(dex)!) }
+        listCopy.reserveCapacity(group.count)
+        group.addLinks(toArray: &listCopy)
         return setListToCheck(links: listCopy, name: group.groupName, source: source)
     }
     // for unsorted links, since the array is internal to the link collection object
@@ -385,6 +386,12 @@ class GB_GroupLinkChecker {
         var listCopy:[GB_SiteLink] = []
         for dex in 0..<collection.unsortedLinkCount { listCopy.append(collection.linkAtIndex(dex)) }
         return setListToCheck(links: listCopy, name: "Unsorted Links", source: collection)
+    }
+    // another method that uses a page of links object
+    public func setPageToCheck(page:GB_PageOfLinks, source:GB_LinkCollection) -> Bool {
+        let listCopy = page.getAllLinkList()
+        if (listCopy.count == 0) { return false }
+        return setListToCheck(links: listCopy, name: page.pageName, source: source)
     }
     
     // start checking using the already set list

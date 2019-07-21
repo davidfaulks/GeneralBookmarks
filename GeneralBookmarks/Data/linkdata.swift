@@ -483,6 +483,11 @@ class GB_LinkGroup : NSObject, NSCoding {
         else { return linkList[index] }
     }
     
+    // for getting a list of all links (violates protection, so be careful)
+    func addLinks(toArray:inout [GB_SiteLink]) {
+        toArray.append(contentsOf: linkList)
+    }
+    
     // ++++ [ Coding related constants and Methods ] +++++++++++++
     fileprivate let groupNameKey = "GroupNameKey"
     fileprivate let linkListKey = "LinkListKey"

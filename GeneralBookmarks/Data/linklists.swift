@@ -75,6 +75,15 @@ class GB_PageOfLinks: NSObject,NSCoding {
         }
         return UInt(linkTotal)
     }
+    //-----------------------------------------
+    func getAllLinkList() -> [GB_SiteLink] {
+        var res:[GB_SiteLink] = []
+        res.reserveCapacity(Int(self.countLinks))
+        for currGroup in groups {
+            currGroup.addLinks(toArray: &res)
+        }
+        return res
+    }
     
 }
 

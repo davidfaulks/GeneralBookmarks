@@ -119,6 +119,7 @@ class ViewController: NSViewController,NSTextFieldDelegate {
     
     fileprivate let renameGroupTag = "Rename this Group..."
     fileprivate let deleteGroupTag = "Delete this Group"
+    private let checkAllLinksTag = "Start checking all Links"
     
     fileprivate let addLinkTitle = "Add a new Link..."
     fileprivate let deleteLinkTitle = "Delete this Link"
@@ -163,6 +164,9 @@ class ViewController: NSViewController,NSTextFieldDelegate {
         // delete group
         nmi = makeMI(deletePageTag, action: #selector(handleMenuDeleteGroup))
         groupPickerPopupMenu!.addItem(nmi)
+        // check all links in page
+        nmi = makeMI(checkAllLinksTag, action: #selector(handleMenuCheckAllGroupLinks))
+        groupPickerPopupMenu!.addItem(nmi)
         
         groupPickerList.tableMenu = groupPickerPopupMenu
         
@@ -187,7 +191,6 @@ class ViewController: NSViewController,NSTextFieldDelegate {
         // check all links
         nmi = makeMI(checkLinksTitle, action: #selector(handleMenuUnsortedCheckLinks))
         unsortedLinksPopupMenu!.addItem(nmi)
-        
         
         unsortedLinksTable.menu = unsortedLinksPopupMenu
         
@@ -383,6 +386,14 @@ class ViewController: NSViewController,NSTextFieldDelegate {
             }
         }
     }
+    // launch checking all links in current page
+    @objc func handleMenuCheckAllGroupLinks(_ sender:AnyObject?) {
+        guard let pageIndex = pagePickerList.selectedUIndex else { return }
+        let currentPage = docPointer!.document_data.listOfPages[pageIndex]
+        _ = appPtr.groupChecker.setPageToCheck(page: currentPage, source: docPointer!.document_data)
+        startProgress(message: "Checking links in Page \(currentPage.pageName)")
+        _ = appPtr.groupChecker.startChecks()
+    }
     //--------------------------------------------
     // unsorted links list: add a new site
     @objc func handleMenuUnsortedAddSite(_ sender:AnyObject?) {
@@ -492,7 +503,7 @@ class ViewController: NSViewController,NSTextFieldDelegate {
         _ = currentGroupLinksTable.deleteSelectedRows()
     }
     //--------------------------------------------
-    // validator
+    // validator. perhaps it might be better to use a dictionary of closures
     override func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
         // page picker list validation
         if menuItem === pagePickerPopupMenu!.item(withTitle: renamePageTag) {
@@ -514,6 +525,9 @@ class ViewController: NSViewController,NSTextFieldDelegate {
         if menuItem === groupPickerPopupMenu!.item(withTitle: deleteGroupTag) {
             let clickedRow = groupPickerList.clickedRow
             return (clickedRow >= 0)
+        }
+        if menuItem == groupPickerPopupMenu!.item(withTitle: checkAllLinksTag) {
+            return groupListDelegate!.hasCurrentPage
         }
         // unsorted links validation
         if menuItem === unsortedLinksPopupMenu!.item(withTitle: deleteLinkTitle) {
