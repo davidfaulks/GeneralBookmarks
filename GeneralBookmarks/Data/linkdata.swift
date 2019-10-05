@@ -356,6 +356,39 @@ func checkForSameURLs(linkone:GB_SiteLink, linktwo:GB_SiteLink) -> SameURLResult
     else if (onetrue == linkone.linkCount) && (twotrue == linktwo.linkCount) { return .all }
     else { return .some}
 }
+
+// takes an array of GB_SiteLink objects, sorts and removes duplicates
+func makeFilteredSortedArray(sourceList:[GB_SiteLink]) -> [GB_SiteLink]? {
+    if sourceList.count < 2 { return nil } // trivial do nothing
+    // we go over the list to figure out what we might remove first
+    var removeDuplicates = false
+    print("Start Links: \(sourceList.count)")
+    var keepLink = Array(repeating: true , count: sourceList.count)
+    for odex in 0..<(sourceList.count-1) {
+        for idex in (odex+1)..<sourceList.count {
+            if !keepLink[idex] { continue }
+            let compres = checkForSameURLs(linkone: sourceList[odex], linktwo: sourceList[idex])
+            if compres == .all {
+                removeDuplicates = true
+                keepLink[idex] = false
+            }
+        }
+    }
+    // producing a new list for sorting
+    var listToSort:[GB_SiteLink] = []
+    if !removeDuplicates { listToSort = sourceList }
+    else {
+        for cdex in 0..<sourceList.count {
+            if keepLink[cdex] { listToSort.append(sourceList[cdex]) }
+        }
+    }
+    // sorting
+    listToSort.sort(by: { $0.orderedBefore($1) } )
+    return listToSort
+}
+
+
+
 //==========================================================
 /* Now, a class for holding multiple links. In addition to a simple list,
 we also include a map, so we can find the index from the object (this is
@@ -461,6 +494,16 @@ class GB_LinkGroup : NSObject, NSCoding {
         let result = linkList
         linkIndexLookup = [:]
         return result
+    }
+    
+    // internal remove duplicates and sort
+    func removeDuplicatesAndSort() -> Bool {
+        guard let resList = makeFilteredSortedArray(sourceList: linkList) else {
+            return false
+        }
+        linkList = resList
+        updateLinkMapAfterIndex(0)
+        return true
     }
     
     // ++++ [ other SiteLink Methods ] +++++++++++++++++++++++++++

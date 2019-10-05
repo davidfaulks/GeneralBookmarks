@@ -213,6 +213,9 @@ class ViewController: NSViewController,NSTextFieldDelegate {
         // check links in group
         nmi = makeMI(checkLinksTitle, action: #selector(handleMenuCurrentGroupCheckLinks))
         currentGroupLinksPopupMenu!.addItem(nmi)
+        // sort and remove duplicates links in current group
+        nmi = makeMI(filterOrderTitle, action: #selector(handleMenuCurrentLinksFilerAndOrder))
+        currentGroupLinksPopupMenu!.addItem(nmi)
         
         currentGroupLinksTable.menu = currentGroupLinksPopupMenu
    
@@ -456,8 +459,6 @@ class ViewController: NSViewController,NSTextFieldDelegate {
                 _ = self.unsortedLinksTable.reloadAndSetIndex(0)
             }
         }
-        
-        
     }
     
     // current group links list: open site in browser (using the first url) {
@@ -502,6 +503,34 @@ class ViewController: NSViewController,NSTextFieldDelegate {
     @objc func handleMenuGroupLinksDeleteMultiple(_ sender:AnyObject?) {
         _ = currentGroupLinksTable.deleteSelectedRows()
     }
+    
+    // current group links list: remove duplicates and order (sort)
+    @objc func handleMenuCurrentLinksFilerAndOrder(_ sender:AnyObject?) {
+        // before we start, disable the current group links
+        usort_active = true
+        currentGroupLinksTable.isEnabled = false
+        currentGroupLinksTable.alphaValue = 0.7
+
+        startProgress(message: "Filtering and Ordering Current Group Links..." )
+        // launch the filer and order process
+        DispatchQueue.global(qos: .userInitiated).async {
+            let currGroup = self.groupLinksDelegate!.currentGroupLink!
+            let rneed = currGroup.removeDuplicatesAndSort()
+            DispatchQueue.main.async {
+                self.currentGroupLinksTable.alphaValue = 1.0
+                self.currentGroupLinksTable.isEnabled = true
+
+                self.usort_active = false
+                self.stopProgress(message:"Current Group Links have been Filtered and Ordered." )
+                if rneed { _ = self.currentGroupLinksTable.reloadAndSetIndex(0) }
+            }
+        }
+    }
+    
+    
+    
+    
+    
     //--------------------------------------------
     // validator. perhaps it might be better to use a dictionary of closures
     override func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
@@ -574,6 +603,11 @@ class ViewController: NSViewController,NSTextFieldDelegate {
             if docPointer == nil { return false }
             return groupLinksDelegate?.currentGroupLink != nil
         }
+        if menuItem === currentGroupLinksPopupMenu!.item(withTitle: filterOrderTitle) {
+            if docPointer == nil { return false }
+            if usort_active { return false }
+            return groupLinksDelegate?.currentGroupLink != nil
+        }
         return true
     }
     
@@ -596,7 +630,9 @@ class ViewController: NSViewController,NSTextFieldDelegate {
     @objc func handleGroupChangeNotification(_ notification: Notification) {
         let changeIndexes = notification.userInfo as! [String:Int]
         let toIndex = changeIndexes["to row"]
-        _ = groupLinksDelegate!.changeGroup(UInt(toIndex!))
+        if toIndex! >= 0 {
+            _ = groupLinksDelegate!.changeGroup(UInt(toIndex!))
+        }
     }
     
     @objc func handlePageChangeNotification(_ notification: Notification) {

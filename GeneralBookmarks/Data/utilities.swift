@@ -421,8 +421,8 @@ func moveItemsInArray<T>(_ array:inout Array<T>, fromIndexes:IndexSet, toIndex:I
     return true    
 }
 //==================================================================
-/* NSTextView does auto replace and spellchecking by default, and turning this off in the
- interface builder has no effect. */
+/* NSTextView does auto replace and spellchecking by default, and turning
+ this off in the interface builder has no effect. */
 func textViewRFix(textview:NSTextView) {
     textview.isAutomaticTextReplacementEnabled = false
     textview.isAutomaticDashSubstitutionEnabled = false
