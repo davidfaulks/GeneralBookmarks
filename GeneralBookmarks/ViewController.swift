@@ -756,37 +756,56 @@ class ViewController: NSViewController,NSTextFieldDelegate {
     
     // first responder to the menu item
     @IBAction func ImportLinksFromHTML(_ sender:AnyObject) {
-        let importPath = openFileDialog("Pick an HTML file to get links from.", filetypes: ["htm","html"])
-        if importPath != nil {
-            startProgress(message: "Loading File: " + importPath!)
-            let loadData = loadHTMLFileToString(importPath!)
-            // if loading the HTML file fails, we display an error popup
+        guard let importUrls = openFileDialogMulti(
+            "Pick HTML files to get links from.",
+            filetypes: ["htm","html"]) else { return }
+        if importUrls.isEmpty { return }
+        
+        var rlinks = 0
+        var files_done = 0
+        var extractedLinks:[GB_SiteLink] = []
+        // looping over the results
+        for furl in importUrls {
+            let importPath = furl.path
+            // start message
+            let startMsg = "Loading File: \(importPath)..."
+            if files_done == 0 { startProgress(message: startMsg) }
+            else  { messageDisplay.stringValue = startMsg }
+
+            let loadData = loadHTMLFileToString(importPath)
+            // if loading an HTML file fails, we halt with an error message
             if !(loadData.0) {
-                stopProgress(message: "Loading file failed!")
-                let infoMsg = "Loading the file: \(loadData) failed,\n" + "Error : \(loadData.1)"
+                stopProgress(message: "Loading file \(importPath) failed!")
+                let infoMsg = "Loading the file: \(importPath) failed,\n" + "Error : \(loadData.1)"
                 showModalMessage("Loading File Failed", info:infoMsg , style: .warning, btnLabel: "Sorry")
+                break
             }
-                // otherwise, we try to parse the data
-            else {
-                // parsing for links
-                messageDisplay.stringValue = "File loaded. Now extracting links..."
-                let resLinks = extractLinksFromHTML(loadData.1)
-                // displaying the results
-                let linkCountStr:String
-                if resLinks.count == 0 { linkCountStr = "No Links" }
-                else if resLinks.count == 1 { linkCountStr = "One Link" }
-                else { linkCountStr = "\(resLinks.count) Links" }
-                let infoMsg = "\(linkCountStr) have been extracted."
-                stopProgress(message: infoMsg)
-                showModalMessage("Link extraction done", info: infoMsg, style: .informational , btnLabel: "Ok")
-                // inserting the results in the collection
-                if resLinks.count > 0 {
-                    startProgress(message: "Adding the new Links to Unsorted Links...")
-                    docPointer!.document_data.appendLinkArray(resLinks)
-                    unsortedLinksTable!.reloadAfterAppend()
-                    stopProgress(message: "New links have been added to Unsorted Links.")
-                }
-            }
+            // next, we try to parse the links
+            messageDisplay.stringValue = "File loaded. Now extracting links..."
+            let resLinks = extractLinksFromHTML(loadData.1)
+            // getting the results
+            rlinks += resLinks.count
+            extractedLinks.append(contentsOf: resLinks)
+            files_done += 1
+        }
+        let okay_exit = (files_done == importUrls.count)
+        if !okay_exit { return }
+        
+        // after a successful extraction, we display a message first
+        let linkCountStr:String
+        if      rlinks == 0 { linkCountStr = "No Links" }
+        else if rlinks == 1 { linkCountStr = "One Link" }
+        else { linkCountStr = "\(rlinks) Links" }
+        let infoMsg = "\(linkCountStr) have been extracted."
+        stopProgress(message: infoMsg)
+        showModalMessage("Link extraction done", info: infoMsg, style: .informational , btnLabel: "Ok")
+        
+        // inserting the results in the collection
+        if rlinks > 0 {
+            startProgress(message: "Adding the new Links to Unsorted Links...")
+            docPointer!.document_data.appendLinkArray(extractedLinks)
+            unsortedLinksTable!.reloadAfterAppend()
+            stopProgress(message: "New links have been added to Unsorted Links.")
         }
     }
     

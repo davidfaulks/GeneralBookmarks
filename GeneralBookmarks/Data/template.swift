@@ -22,9 +22,8 @@ class GBTemplateOutputter: NSObject,NSCoding {
     // initial output setup method
     func setupOutput(collection:GB_LinkCollection,targetDirectory:String) -> Bool {
         // validating the directory
-        var directoryTest:ObjCBool = ObjCBool(false)
-        let fexists = FileManager.default.fileExists(atPath: targetDirectory, isDirectory: &directoryTest)
-        if (!fexists) || (!directoryTest.boolValue) { return false }
+        if !doesDirExist(path: targetDirectory) { return false }
+
         // setting the values...
         outputDirectory = URL(fileURLWithPath: targetDirectory, isDirectory: true)
         collectionToOutput = collection

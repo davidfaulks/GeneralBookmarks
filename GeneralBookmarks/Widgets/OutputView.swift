@@ -40,6 +40,15 @@ class OutputView: NSViewController,GBListBoxDelegate {
         startOutputButton.isEnabled = (pickTemplateList.selectedIndex >= 0)
     }
     
+    override func viewWillAppear() {
+        super.viewWillAppear()
+        let td = UserDefaults.standard.string(forKey: OD_KEY)
+        if (td != nil) && doesDirExist(path: td!) {
+            outputDirectory = td!
+            outputDirectoryLabel.stringValue = "To: " + self.outputDirectory
+        }
+    }
+    
     //=========================================================
     private var outputterTemplateList:[GBTemplateDocument] = []
     var itemCount:Int {
@@ -187,10 +196,15 @@ class OutputView: NSViewController,GBListBoxDelegate {
         if newOutputDir != nil {
             outputDirectory = newOutputDir!
             outputDirectoryLabel.stringValue = "To: " + self.outputDirectory
+            UserDefaults.standard.set(outputDirectory, forKey: OD_KEY)
         }
     }
+    
+    // we'll save the output directory location in user defaults
+    let OD_KEY = "OutputDirectoryPathKey"
+    
     //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    // when loading mulriple templates, keep track of the counts
+    // when loading multiple templates, keep track of the counts
     private var to_open:Int = 0
     private var handled:Int = 0
     private var was_open:Int = 0

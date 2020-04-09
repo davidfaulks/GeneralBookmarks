@@ -176,7 +176,13 @@ func showModalNewLinkDialog(_ accesory_view:GB_LinkEntryView) -> GB_SiteLink? {
     }
     
 }
-
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// a helper to check if a directory exists
+func doesDirExist(path:String) -> Bool {
+    var directoryTest:ObjCBool = ObjCBool(false)
+    let fexists = FileManager.default.fileExists(atPath: path, isDirectory: &directoryTest)
+    return fexists && directoryTest.boolValue
+}
 //*************************************************************************
 
 
