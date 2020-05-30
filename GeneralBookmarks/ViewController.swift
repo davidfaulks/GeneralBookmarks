@@ -162,7 +162,7 @@ class ViewController: NSViewController,NSTextFieldDelegate {
         nmi = makeMI(renameGroupTag, action: #selector(handleMenuRenameGroup))
         groupPickerPopupMenu!.addItem(nmi)
         // delete group
-        nmi = makeMI(deletePageTag, action: #selector(handleMenuDeleteGroup))
+        nmi = makeMI(deleteGroupTag, action: #selector(handleMenuDeleteGroup))
         groupPickerPopupMenu!.addItem(nmi)
         // check all links in page
         nmi = makeMI(checkAllLinksTag, action: #selector(handleMenuCheckAllGroupLinks))

@@ -407,6 +407,7 @@ class GBListBox : NSView, NSTableViewDataSource, NSTableViewDelegate {
         container.autoresizingMask = [NSView.AutoresizingMask.height,NSView.AutoresizingMask.width]
         table.delegate = self
         table.dataSource = self
+        
     }
     
 }

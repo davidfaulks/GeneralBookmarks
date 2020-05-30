@@ -20,7 +20,7 @@ class GB_TemplateEditPage: NSViewController {
     @IBOutlet weak var pageTemplateWrapInterior: NSView!
     
     @IBOutlet weak var pageTemplateLabel: NSTextField!
-    @IBOutlet weak var pageTemplateEdit: NSTextView!
+    @IBOutlet var pageTemplateEdit: NSTextView!
     
     @IBOutlet weak var groupSplitWrapper: NSBox!
     @IBOutlet weak var groupSplitWrapInterior: NSView!

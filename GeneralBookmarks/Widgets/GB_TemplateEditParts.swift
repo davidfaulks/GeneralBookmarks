@@ -22,7 +22,7 @@ class GB_TemplateEditParts: NSViewController, NSTextDelegate {
     @IBOutlet weak var siteNLSeparatorCheckbox: NSButton!
     
     @IBOutlet weak var groupOverallLabel: NSTextField!
-    @IBOutlet weak var groupTemplateEdit: NSTextView!
+    @IBOutlet var groupTemplateEdit: NSTextView!
     
     @IBOutlet weak var groupListWrapper: NSBox!
     @IBOutlet weak var groupListWrapInterior: NSView!
@@ -54,7 +54,7 @@ class GB_TemplateEditParts: NSViewController, NSTextDelegate {
     @IBOutlet weak var MajorLinkNavSeparatorLabel: NSTextField!
     @IBOutlet weak var majorLinkSeparatorEdit: NSTextField!
     @IBOutlet weak var majorLinkNavOverallLabel: NSTextField!
-    @IBOutlet weak var majorLinkNavOverallEdit: NSTextView!
+    @IBOutlet var majorLinkNavOverallEdit: NSTextView!
     //==============================================================
     let incompleteColour = NSColor(calibratedRed: 1.0, green: 0.0, blue: 0.0, alpha: 0.2)
     private var defaultBackgroundColour:NSColor? = nil

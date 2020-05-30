@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6393C2C8247FE20600EEA056 /* linkdelegates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6393C2C7247FE20600EEA056 /* linkdelegates.swift */; };
 		740839741D5CBB0E00A84727 /* LinkEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 740839731D5CBB0E00A84727 /* LinkEditViewController.swift */; };
 		741AD7D820136FCE0088C08E /* template.swift in Sources */ = {isa = PBXBuildFile; fileRef = 741AD7D720136FCE0088C08E /* template.swift */; };
 		741F96921D5CB044008E7E8C /* linkdata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 741F968F1D5CB044008E7E8C /* linkdata.swift */; };
@@ -43,6 +44,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6393C2C7247FE20600EEA056 /* linkdelegates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = linkdelegates.swift; sourceTree = "<group>"; };
 		740839731D5CBB0E00A84727 /* LinkEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkEditViewController.swift; sourceTree = "<group>"; };
 		741AD7D720136FCE0088C08E /* template.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = template.swift; sourceTree = "<group>"; };
 		741F968F1D5CB044008E7E8C /* linkdata.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = linkdata.swift; sourceTree = "<group>"; };
@@ -108,6 +110,7 @@
 		741F96951D5CB04E008E7E8C /* Widgets */ = {
 			isa = PBXGroup;
 			children = (
+				6393C2C7247FE20600EEA056 /* linkdelegates.swift */,
 				741F96961D5CB04E008E7E8C /* delegates.swift */,
 				741F96971D5CB04E008E7E8C /* dialogs.swift */,
 				741F96981D5CB04E008E7E8C /* GB_LinkEntryView.swift */,
@@ -255,6 +258,7 @@
 				741F96931D5CB044008E7E8C /* linklists.swift in Sources */,
 				741AD7D820136FCE0088C08E /* template.swift in Sources */,
 				74A9D70F1FF94071007224FD /* GB_TemplateLinkEdit.swift in Sources */,
+				6393C2C8247FE20600EEA056 /* linkdelegates.swift in Sources */,
 				74F3D4E41FEEE1540026E539 /* makepages.swift in Sources */,
 				741F969D1D5CB04E008E7E8C /* dialogs.swift in Sources */,
 				74A9D7091FF6C729007224FD /* GBTemplateEditView.swift in Sources */,
