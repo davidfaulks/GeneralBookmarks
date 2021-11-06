@@ -102,8 +102,10 @@ class GB_CheckSiteLink : NSObject, URLSessionDelegate, URLSessionTaskDelegate {
             URLs.append(tempURL)
             if tempURL == nil { results.append(.Invalid) }
             else {
+                let tlda = tempURL!.host!.split(separator: Character("."))
+                let tld = String(tlda.last!).lowercased()
                 let proto = tempURL!.scheme!.lowercased()
-                if (proto == "http") || (proto == "https") {
+                if ((proto == "http") || (proto == "https")) && (tld != "onion") {
                     results.append(.Unchecked)
                 }
                 else { results.append(.Invalid)}

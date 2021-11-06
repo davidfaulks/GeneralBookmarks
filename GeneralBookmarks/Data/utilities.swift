@@ -245,7 +245,7 @@ func stringToFilename(source:String) -> String {
 //-----------------------------------------------------------------
 // tests if a string has one of a set of prefixes, case insensetive
 func hasAllowedPrefix(_ testURL:String) -> Bool {
-    let allowedPrefixes = ["http:","https:","ftp:","ftps:","gopher:","sftp:"]
+    let allowedPrefixes = ["http:", "https:", "ftp:", "ftps:", "gopher:", "sftp:", "gemini:"]
     let lowercaseInput = testURL.lowercased(with: Locale(identifier: "en_US"))
     // loop testing
     for currPrefix in allowedPrefixes {
