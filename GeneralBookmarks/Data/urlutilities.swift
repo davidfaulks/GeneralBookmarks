@@ -386,7 +386,12 @@ class GB_GroupLinkChecker {
     public func setUnsortedToCheck(collection:GB_LinkCollection) -> Bool {
         if collection.unsortedLinkCount == 0 { return false }
         var listCopy:[GB_SiteLink] = []
-        for dex in 0..<collection.unsortedLinkCount { listCopy.append(collection.linkAtIndex(dex)) }
+        let cc = collection.unsortedLinkCount
+        for dex in 0..<collection.unsortedLinkCount {
+            let linkAtIndex = collection.linkAtIndex(dex)
+            listCopy.append(linkAtIndex)
+            
+        }
         return setListToCheck(links: listCopy, name: "Unsorted Links", source: collection)
     }
     // another method that uses a page of links object

@@ -20,6 +20,9 @@ class ViewController: NSViewController,NSTextFieldDelegate {
     @IBOutlet weak var currentGroupLinksLabel: NSTextField!
     @IBOutlet weak var currentGroupLinksTable: GB_LinkTableView!
     
+    @IBOutlet weak var currentGroupSplitDisplay: NSTextField!
+    @IBOutlet weak var currentGroupSplitStepper: NSStepper!
+    
     // page and group pickers
     @IBOutlet weak var groupPickerList: GBListBox!
     @IBOutlet weak var pagePickerList: GBListBox!
@@ -68,6 +71,10 @@ class ViewController: NSViewController,NSTextFieldDelegate {
         groupLinksDelegate!.otherTable = unsortedLinksTable
         unsortedLinksTable.registerForDraggedTypes([GBSiteLinkPBoardType])
         currentGroupLinksTable.registerForDraggedTypes([GBSiteLinkPBoardType])
+        
+        currentGroupSplitStepper.minValue = 0
+        currentGroupSplitStepper.maxValue = 99
+        currentGroupSplitStepper.increment = 1
 
         // listviews for groups (with delegates)
         groupListDelegate = GB_GroupNamesDelegate()
@@ -127,6 +134,7 @@ class ViewController: NSViewController,NSTextFieldDelegate {
     fileprivate let openLinkTitle = "Open Link in a browser"
     fileprivate let checkLinksTitle = "Start checking Links"
     fileprivate let filterOrderTitle = "Order and Remove Duplicates"
+    fileprivate let removeExistingTitle = "Remove existsing Links"
     
     // shortener helper for popup menu
     private func makeMI(_ title:String, action:Selector) -> NSMenuItem {
@@ -190,6 +198,9 @@ class ViewController: NSViewController,NSTextFieldDelegate {
         unsortedLinksPopupMenu!.addItem(nmi)
         // check all links
         nmi = makeMI(checkLinksTitle, action: #selector(handleMenuUnsortedCheckLinks))
+        unsortedLinksPopupMenu!.addItem(nmi)
+        // delete duplicate unsirted links
+        nmi = makeMI(removeExistingTitle, action: #selector(handleMenuRemoveExistsingLinks))
         unsortedLinksPopupMenu!.addItem(nmi)
         
         unsortedLinksTable.menu = unsortedLinksPopupMenu
@@ -461,6 +472,34 @@ class ViewController: NSViewController,NSTextFieldDelegate {
         }
     }
     
+    // unsorted links list: start checking all of the links
+    @objc func handleMenuRemoveExistsingLinks(_ sender:AnyObject?) {
+        // before we start, disable the unsorted links
+        usort_active = true
+        unsortedLinksTable.isEnabled = false
+        unsortedLinksTable.alphaValue = 0.7
+        startProgress(message: "Looking for and Removing existsing Links..." )
+        
+        // launch the filer and order process
+        DispatchQueue.global(qos: .userInitiated).async {
+            
+            let removed = self.docPointer!.document_data.lookForAndRemoveUnsortedLinksAlreadyInPages()
+            var removeMessage = "Unsorted links have been checked. "
+            if removed == 0 { removeMessage += "No Links have "}
+            else if removed == 1 { removeMessage += "One Link has" }
+            else { removeMessage += "\(removed) Links have "}
+            removeMessage += "been removed."
+            
+            DispatchQueue.main.async {
+                self.unsortedLinksTable.alphaValue = 1.0
+                self.unsortedLinksTable.isEnabled = true
+                self.usort_active = false
+                self.stopProgress(message:removeMessage )
+                _ = self.unsortedLinksTable.reloadAndSetIndex(0)
+            }
+        }
+    }
+    
     // current group links list: open site in browser (using the first url) {
     @objc func handleMenuCurrentGroupOpenSite(_ sender:AnyObject?) {
         _ = currentGroupLinksTable.launchClickedRowInBrowser()
@@ -577,6 +616,12 @@ class ViewController: NSViewController,NSTextFieldDelegate {
             let unscount = docPointer!.document_data.unsortedLinkCount
             return (appPtr.groupChecker.notActive && (unscount > 1))
         }
+        if menuItem == unsortedLinksPopupMenu!.item(withTitle: removeExistingTitle) {
+            if docPointer == nil { return false }
+            if usort_active { return false }
+            let unscount = docPointer!.document_data.unsortedLinkCount
+            return (appPtr.groupChecker.notActive && (unscount > 0))
+        }
         if menuItem === unsortedLinksPopupMenu!.item(withTitle: openLinkTitle) {
             if docPointer == nil { return false }
             let clickedRow = unsortedLinksTable!.clickedRow
@@ -632,6 +677,7 @@ class ViewController: NSViewController,NSTextFieldDelegate {
         let toIndex = changeIndexes["to row"]
         if toIndex! >= 0 {
             _ = groupLinksDelegate!.changeGroup(UInt(toIndex!))
+            _ = loadSplitAmount()
         }
     }
     
@@ -896,6 +942,26 @@ class ViewController: NSViewController,NSTextFieldDelegate {
         progressWidget.isHidden = true
         messageDisplay.stringValue = message
     }
-
+    
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    
+    private func loadSplitAmount() -> Bool {
+        guard let currGroup = groupLinksDelegate?.currentGroupLink else {
+            return false;
+        }
+        let splitAmount = currGroup.linksPerSplit
+        currentGroupSplitStepper.intValue = Int32(splitAmount)
+        currentGroupSplitDisplay.stringValue = "\(splitAmount)"
+        return true
+    }
+    
+    @IBAction func onSplitStepperChange(_ sender: Any) {
+        let stepperValue = Int(currentGroupSplitStepper.intValue)
+        currentGroupSplitDisplay.stringValue = "\(stepperValue)"
+        if let currGroup = groupLinksDelegate?.currentGroupLink  {
+            currGroup.linksPerSplit = stepperValue
+        }
+    }
+    
 }
 

@@ -32,23 +32,23 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let docControl = NSDocumentController.shared
         if pickResult == 0 {
             // making and launching a blank Link Collection
-            var newLinkColl:GBDocument? = nil
+            var newLinkColl:GBDocument
             do {
                 // makeUntitledDocument throws, but what? The Apple docs do not say.
-                newLinkColl = try docControl.makeUntitledDocument(ofType: "LinkCollection") as! GBDocument
+                newLinkColl = try (docControl.makeUntitledDocument(ofType: "LinkCollection") as! GBDocument)
             }
             catch {
                 showModalMessage("Creating Link Collection Failed!", info: "No idea why.", style: .critical, btnLabel: "Darn")
                 return
             }
             // finishing off
-            docControl.addDocument(newLinkColl!)
-            newLinkColl!.makeWindowControllers()
-            newLinkColl!.showWindows()
+            docControl.addDocument(newLinkColl)
+            newLinkColl.makeWindowControllers()
+            newLinkColl.showWindows()
         }
         else {
             // making and launching a blank output template
-            var newOutputTemplate:GBTemplateDocument? = nil
+            var newOutputTemplate:GBTemplateDocument
             print("GBTemplateDocument A")
             do {
                 newOutputTemplate = try docControl.makeUntitledDocument(ofType: "OutputTemplate") as! GBTemplateDocument
@@ -59,10 +59,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
             print("GBTemplateDocument B")
             // finishing off
-            docControl.addDocument(newOutputTemplate!)
+            docControl.addDocument(newOutputTemplate)
             print("GBTemplateDocument C")
-            newOutputTemplate!.makeWindowControllers()
-            newOutputTemplate!.showWindows()
+            newOutputTemplate.makeWindowControllers()
+            newOutputTemplate.showWindows()
         }
         // done
     }

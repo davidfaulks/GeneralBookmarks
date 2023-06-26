@@ -268,7 +268,9 @@ func extractLinksFromHTML(_ inputHTML:String) ->[GB_SiteLink] {
         // testing the url (certain protocols only)
         if !url.contains(":") { continue }
         if (!hasAllowedPrefix(url)) { continue }
-        let unescURL = url.removingPercentEncoding!
+        guard let unescURL = url.removingPercentEncoding else {
+            continue
+        }
         // here, we have a valid url, what is the label?
         guard let lLabel = extractor.getDelimitedSubString(">", "</a>") else { continue }
         let convertedLabel = textFromHTML(lLabel)

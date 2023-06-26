@@ -136,12 +136,14 @@ class GB_PageOutputter: NSObject,NSCoding {
     
     // +++ [ Methods related to producing the output ] ++++++++++++++++++++
     private var groupSplit:[Int] = [] // number of groups per column/set
-    func calculateGroupSplit(usingPage page:GB_PageOfLinks) {
+    
+    // func calculateGroupSplit(usingPage page:GB_PageOfLinks) {
+    func calculateGroupSplit(usingList groupList:[GB_LinkGroup]) {
         var groupSizes:[Float] = []
         var totalSize:Float = 0.0
         // we first calculate a size for each group
-        for groupIndex in 0..<page.groups.count {
-            let currentGroup = page.groups[groupIndex]
+        for groupIndex in 0..<groupList.count {
+            let currentGroup = groupList[groupIndex]
             // getting link counts
             let majorCount = currentGroup.countMajorLinks
             let minorCount = currentGroup.countNonDepreciatedLinks - majorCount
@@ -167,7 +169,7 @@ class GB_PageOutputter: NSObject,NSCoding {
                 columnsLeft -= 1
                 // if there is only 1 column left, we are done...
                 if columnsLeft == 1 {
-                    groupSplit.append(page.groups.count - groupRunCount)
+                    groupSplit.append(groupList.count - groupRunCount)
                     return
                 }
                 groupRunCount = 0
@@ -181,19 +183,21 @@ class GB_PageOutputter: NSObject,NSCoding {
     }
     
     // private helper method for producing a group list
-    private func makeGroupList(page:GB_PageOfLinks, groupListIndex:Int, groupListStart:Int) -> String {
+    private func makeGroupList(/* page:GB_PageOfLinks,*/ groupList:[GB_LinkGroup], groupListIndex:Int, groupListStart:Int) -> String {
         // we assume the inputs are okay...
         // making a group slice
         let upperBound = groupListStart + groupSplit[groupListIndex]
-        let workGroups = Array(page.groups[groupListStart..<upperBound])
+        let workGroups = Array(groupList[groupListStart..<upperBound])
         let mlink = majorLinkFormat ?? linkFormatter
         return groupListFormatter.convertData(source: workGroups, groupFormatter: groupFormatter, basicLinkFormatter: linkFormatter, majorLinkFormatter: mlink)
     }
     
     // producing the output
     func makePage(page:GB_PageOfLinks, pageNavFormat:GB_PageNavOutputter?) -> String {
+        let groupList = page.getAllSpltGroups()
         groupSplit = []
-        calculateGroupSplit(usingPage: page)
+        calculateGroupSplit(usingList: groupList)
+        // calculateGroupSplit(usingPage: page)
         // making the page nav bar (if there)
         let pageNav:String
         if pageNavFormat != nil {
@@ -208,7 +212,7 @@ class GB_PageOutputter: NSObject,NSCoding {
         }
         // the optional group bar and big Links
         if groupBarFormatter != nil {
-            let groupBar = groupBarFormatter!.produceResults(source: page)
+            let groupBar = groupBarFormatter!.produceResults(groupListing: groupList)
             output = output.replacingOccurrences(of: "&#3#", with: groupBar)
         }
         if bigLinksFormatter != nil {
@@ -219,7 +223,10 @@ class GB_PageOutputter: NSObject,NSCoding {
         var groupIndex = 0
         for cIndex in 0..<groupSplit.count {
             let replaceThis = "&#0\(cIndex)#"
+            /*
             let currentColumnString = makeGroupList(page:page, groupListIndex: cIndex, groupListStart: groupIndex)
+             */
+            let currentColumnString = makeGroupList(groupList: groupList, groupListIndex: cIndex, groupListStart: groupIndex)
             output = output.replacingOccurrences(of: replaceThis, with: currentColumnString)
             groupIndex += groupSplit[cIndex]
         }

@@ -217,14 +217,15 @@ class GB_GroupListOutputter : GB_OutputBase {
     var group_link:String = "" // #&0# is the fragment id, #&1# is the group name
  
     // ++++ [ Produces the results for all groups in a page ] ++++++++++++++++++
-    func produceResults(source:GB_PageOfLinks) -> String {
-        let groupCount = source.groups.count
+    // func produceResults(source:GB_PageOfLinks) -> String {
+    func produceResults(groupListing:[GB_LinkGroup]) -> String {
+        let groupCount = groupListing.count
         if groupCount == 0 { return "" }
         // looping over the groups
         var groupList:String = ""
         for groupIndex in 0..<groupCount {
             // getting the group, and converting and adding the link data
-            let currentGroup = source.groups[groupIndex]
+            let currentGroup = groupListing[groupIndex]
             let temp = group_link.replacingOccurrences(of: "&#0#", with: currentGroup.fragmentID)
             let replacement = escapedHTMLfromText(currentGroup.groupName, encodequotes: true)
             groupList +=  temp.replacingOccurrences(of: "&#1#", with: replacement)

@@ -18,8 +18,12 @@ let groupNameKey = "group name"
 let pageNameKey = "page name"
 
 func makeLinkDisplayNotification(_ sourceIndex:Int, _ fromUnsorted:Bool, _ linkPointer:GB_SiteLink?, groupName:String?, pageName:String?) -> [String : AnyObject] {
-    if sourceIndex < 0 { return [unsortedKey:fromUnsorted as AnyObject, indexKey:-1 as AnyObject] }
-    else if fromUnsorted { return [unsortedKey:true as AnyObject, indexKey:sourceIndex as AnyObject, linkKey:linkPointer!] }
+    if sourceIndex < 0 {
+        return [unsortedKey:fromUnsorted as AnyObject, indexKey:-1 as AnyObject]
+    }
+    else if fromUnsorted {
+        return [unsortedKey:true as AnyObject, indexKey:sourceIndex as AnyObject, linkKey:linkPointer!]
+    }
     else {
         return [unsortedKey:false as AnyObject, indexKey:sourceIndex as AnyObject, linkKey:linkPointer!, groupNameKey:groupName! as AnyObject, pageNameKey:pageName! as AnyObject]
     }
@@ -438,7 +442,7 @@ class GB_UnsortedLinksDelegate: GB_LinkTableDelegate {
     override func isForUnsorted() -> Bool { return true }
     override func getLinkForRow(_ row:Int) -> GB_SiteLink? {
         if collectionLink == nil { return nil }
-        if row > (collectionLink!.unsortedLinkCount) { return nil }
+        if row >= (collectionLink!.unsortedLinkCount) { return nil }
         if row < 0 { return nil }
         return collectionLink!.linkAtIndex(row)
     }

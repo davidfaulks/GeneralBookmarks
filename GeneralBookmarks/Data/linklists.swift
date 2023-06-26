@@ -85,6 +85,33 @@ class GB_PageOfLinks: NSObject,NSCoding {
         return res
     }
     
+    func getAllSpltGroups() -> [GB_LinkGroup] {
+        var results:[GB_LinkGroup] = []
+        for currentGroup in groups {
+            results.append(contentsOf: currentGroup.makeSplitGroups())
+        }
+        return results
+    }
+    
+    // -----------------------------------------
+    
+    // checking to see if we have a duplicate. This prioritizes all over some
+    func containsDuplicate(for_link:GB_SiteLink) -> SameURLResult {
+        var currentResult:SameURLResult = .none
+        var lookingForAll = false
+        
+        for linkGroup in groups {
+            let groupResult = linkGroup.containsDuplicate(for_link: for_link)
+            if groupResult == .none { continue }
+            else if groupResult == .all { return .all }
+            else {
+                lookingForAll = true
+                currentResult = .some
+            }
+        }
+        return currentResult
+    }
+    
 }
 
 
@@ -123,7 +150,8 @@ class GB_LinkCollection: NSObject,NSCoding {
     // basic links access
     func linkAtIndex(_ index:Int) -> GB_SiteLink {
         assert(index>=0)
-        assert(index<unsortedLinkCount)
+        let cc = unsortedLinks.count
+        assert(index < cc)
         return unsortedLinks[index]
     }
     
@@ -209,6 +237,40 @@ class GB_LinkCollection: NSObject,NSCoding {
         unsortedLinks = finalList
         print("End Links: \(unsortedLinks.count)")
         updateUnsortedMapAfterIndex(0)
+    }
+    
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++
+    
+    // looking in the pages for a duplicate, theis prioritizes all over some
+    func containsDuplicate(for_link:GB_SiteLink) -> SameURLResult {
+        var currentResult:SameURLResult = .none
+        var lookingForAll = false
+        
+        for pageOfLinks in listOfPages {
+            let pageResult = pageOfLinks.containsDuplicate(for_link: for_link)
+            if pageResult == .none { continue }
+            else if pageResult == .all { return .all }
+            else {
+                lookingForAll = true
+                currentResult = .some
+            }
+        }
+        return currentResult
+    }
+    
+    func lookForAndRemoveUnsortedLinksAlreadyInPages() -> Int {
+        var removedCount = 0
+        let unsortedMax = unsortedLinks.count - 1
+        for pos in (1...unsortedMax).reversed() {
+            let linkToCheck = unsortedLinks[pos]
+            let dupRes = containsDuplicate(for_link: linkToCheck)
+            let remove = (dupRes == .all) || ((dupRes == .some) && (linkToCheck.linkCount == 1))
+            if remove {
+                unsortedLinks.remove(at: pos )
+                removedCount += 1
+            }
+        }
+        return removedCount
     }
     
     //++++++++++++++++++++++++++++++++++++++++++++++++++++

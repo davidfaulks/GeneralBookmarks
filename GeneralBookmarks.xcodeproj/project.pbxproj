@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		638165B6285E748D00A89325 /* linkgroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638165B5285E748D00A89325 /* linkgroup.swift */; };
 		6393C2C8247FE20600EEA056 /* linkdelegates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6393C2C7247FE20600EEA056 /* linkdelegates.swift */; };
 		740839741D5CBB0E00A84727 /* LinkEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 740839731D5CBB0E00A84727 /* LinkEditViewController.swift */; };
 		741AD7D820136FCE0088C08E /* template.swift in Sources */ = {isa = PBXBuildFile; fileRef = 741AD7D720136FCE0088C08E /* template.swift */; };
@@ -44,6 +45,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		638165B5285E748D00A89325 /* linkgroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = linkgroup.swift; sourceTree = "<group>"; };
 		6393C2C7247FE20600EEA056 /* linkdelegates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = linkdelegates.swift; sourceTree = "<group>"; };
 		740839731D5CBB0E00A84727 /* LinkEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkEditViewController.swift; sourceTree = "<group>"; };
 		741AD7D720136FCE0088C08E /* template.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = template.swift; sourceTree = "<group>"; };
@@ -97,6 +99,7 @@
 			isa = PBXGroup;
 			children = (
 				741F968F1D5CB044008E7E8C /* linkdata.swift */,
+				638165B5285E748D00A89325 /* linkgroup.swift */,
 				741F96901D5CB044008E7E8C /* linklists.swift */,
 				741F96911D5CB044008E7E8C /* utilities.swift */,
 				74EF374F1D5FAB4C00D4AF23 /* urlutilities.swift */,
@@ -194,7 +197,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 1020;
+				LastUpgradeCheck = 1320;
 				ORGANIZATIONNAME = dfaulks;
 				TargetAttributes = {
 					74CF93E61D5CAC7400F32381 = {
@@ -250,6 +253,7 @@
 				74A9D70B1FF6C930007224FD /* GB_TemplateEditParts.swift in Sources */,
 				74D68135202E49BC0058C421 /* OutputView.swift in Sources */,
 				7467490A20E1426C0035D622 /* GeneralBookmarksApp.swift in Sources */,
+				638165B6285E748D00A89325 /* linkgroup.swift in Sources */,
 				7471629720EAC0B600ADD55F /* GBListBox.swift in Sources */,
 				741F96941D5CB044008E7E8C /* utilities.swift in Sources */,
 				74672FEF1FFFC1F000E65EB8 /* GB_PageSplitData.swift in Sources */,
@@ -319,6 +323,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -375,6 +380,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -404,10 +410,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = GeneralBookmarks/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = df.GeneralBookmarks;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -420,10 +427,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = GeneralBookmarks/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = df.GeneralBookmarks;
 				PRODUCT_NAME = "$(TARGET_NAME)";
